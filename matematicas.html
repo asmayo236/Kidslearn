@@ -133,6 +133,109 @@
       color: var(--orange);
     }
 
+    /* ===== RAZONAMIENTO LÓGICO ===== */
+
+    /* Patterns */
+    .pattern-row {
+      display: flex; gap: 10px; align-items: center;
+      justify-content: center; flex-wrap: wrap; margin: 20px 0;
+    }
+    .pattern-item {
+      font-size: 2.4em; background: white; border-radius: 16px;
+      padding: 12px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    .pattern-blank {
+      font-size: 2.4em; background: #f3e8ff; border-radius: 16px;
+      padding: 12px 18px; box-shadow: 0 3px 10px rgba(132,94,194,0.2);
+      border: 3px dashed #845EC2; min-width: 68px; text-align: center;
+    }
+    .pattern-arrow { font-size: 1.4em; color: #bbb; margin: 0 4px; }
+    .pattern-opts { display: flex; gap: 14px; justify-content: center; margin-top: 15px; flex-wrap: wrap; }
+    .pattern-opt {
+      font-size: 2.4em; background: white; border: 4px solid #e0e0e0;
+      border-radius: 18px; padding: 14px 20px; cursor: pointer;
+      transition: all 0.15s; box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+    }
+    .pattern-opt:hover { border-color: #845EC2; transform: scale(1.1); }
+    .pattern-opt.correct { background: #e8f8e8; border-color: #6BCB77; animation: popCorrect 0.4s; }
+    .pattern-opt.wrong   { background: #ffe8e8; border-color: #FF6B6B; animation: shake 0.4s; }
+
+    /* Odd one out */
+    .odd-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 12px; max-width: 340px; margin: 15px auto;
+    }
+    .odd-item {
+      background: white; border-radius: 20px; padding: 22px 12px;
+      text-align: center; font-size: 2.8em; cursor: pointer;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+      border: 4px solid transparent; transition: all 0.2s;
+    }
+    .odd-item:hover  { transform: scale(1.06); border-color: #845EC2; }
+    .odd-item.correct { background: #e8f8e8; border-color: #6BCB77; animation: popCorrect 0.4s; }
+    .odd-item.wrong   { background: #ffe8e8; border-color: #FF6B6B; animation: shake 0.4s; }
+
+    /* Compare */
+    .compare-area {
+      display: flex; align-items: center; justify-content: center;
+      gap: 18px; flex-wrap: wrap; margin: 15px 0;
+    }
+    .compare-group {
+      background: #f9f9f9; border-radius: 20px; padding: 15px 20px;
+      display: flex; flex-wrap: wrap; gap: 5px;
+      justify-content: center; align-items: center;
+      min-width: 110px; min-height: 80px; max-width: 160px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.08); cursor: pointer;
+      border: 4px solid transparent; transition: all 0.2s;
+    }
+    .compare-group:hover { border-color: #FF9A3C; transform: scale(1.03); }
+    .compare-group.correct { background: #e8f8e8; border-color: #6BCB77; }
+    .compare-group.wrong   { background: #ffe8e8; border-color: #FF6B6B; animation: shake 0.4s; }
+    .vs-badge {
+      font-size: 1.4em; font-weight: 900; color: #bbb;
+      background: white; border-radius: 50%; width: 50px; height: 50px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+
+    /* Order numbers */
+    .order-target {
+      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+      background: #f9f0ff; border-radius: 20px; padding: 15px;
+      margin: 10px 0; min-height: 85px; border: 3px dashed #d0b0ff;
+      align-items: center;
+    }
+    .order-source {
+      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;
+      margin: 12px 0; min-height: 85px; align-items: center;
+    }
+    .order-slot {
+      width: 62px; height: 72px; background: white; border-radius: 14px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      font-size: 1.6em; font-weight: 900; border: 3px solid #d0b0ff; color: #845EC2;
+      transition: all 0.3s;
+    }
+    .order-slot .slot-pos { font-size: 0.4em; font-weight: 600; color: #bbb; margin-bottom: 2px; }
+    .order-slot.filled { background: linear-gradient(135deg,#6BCB77,#00C9A7); color: white; border-color: transparent; }
+    .order-card {
+      width: 62px; height: 72px;
+      background: linear-gradient(135deg, #FF9A3C, #FFD93D);
+      border-radius: 14px; display: flex; align-items: center; justify-content: center;
+      font-size: 2em; font-weight: 900; cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transition: all 0.15s; color: white;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.2);
+      border: 3px solid transparent;
+    }
+    .order-card:hover:not(.placed) { transform: scale(1.12) translateY(-5px); border-color: white; }
+    .order-card.placed { opacity: 0.25; cursor: not-allowed; transform: none; }
+
+    /* Section sub-title inside tab */
+    .sub-title {
+      font-size: 1.15em; font-weight: 900; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+
     /* Number cards 0-10 */
     .big-num-card {
       background: linear-gradient(135deg, var(--orange), var(--yellow));
@@ -161,7 +264,7 @@
   <div class="page-header" style="--c1:#FF9A3C;--c2:#FFD93D;">
     <span class="page-icon">🔢</span>
     <h1>¡Juguemos con Números!</h1>
-    <p>Contamos, sumamos y restamos</p>
+    <p>Contamos, sumamos, restamos y ¡pensamos!</p>
   </div>
 
   <!-- Tabs -->
@@ -171,6 +274,7 @@
     <button class="tab-btn" data-tab="tab-suma">➕ Sumamos</button>
     <button class="tab-btn" data-tab="tab-resta">➖ Restamos</button>
     <button class="tab-btn" data-tab="tab-quiz">🎯 Quiz</button>
+    <button class="tab-btn" data-tab="tab-logica">🧠 Razonamiento</button>
   </div>
 
   <!-- ===== TAB 1: CONTAMOS ===== -->
@@ -274,6 +378,63 @@
       </div>
       <div class="options-grid" id="quiz-options" style="max-width:400px;margin:0 auto;"></div>
       <div class="feedback" id="quiz-feedback"></div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 6: RAZONAMIENTO LÓGICO ===== -->
+  <div id="tab-logica" class="tab-content">
+    <div class="section-title">🧠 Razonamiento Lógico</div>
+    <p style="color:#666;margin-bottom:20px;">¡Piensa bien y resuelve cada desafío! 🤔</p>
+
+    <!-- 1. PATRONES -->
+    <div class="card" style="margin-bottom:22px;">
+      <div class="sub-title" style="color:#845EC2;">🔁 ¿Qué sigue en el patrón?</div>
+      <p style="color:#666;font-size:0.95em;margin-bottom:12px;">¡Mira la secuencia y elige el emoji que falta! 👇</p>
+      <div class="score-bar">
+        <span id="pat-stars" class="stars-display">☆☆☆☆☆</span>
+        <span id="pat-score" class="score-text">0 / 0 correctas</span>
+      </div>
+      <div class="pattern-row" id="pat-row"></div>
+      <div class="pattern-opts" id="pat-opts"></div>
+      <div class="feedback" id="pat-feedback"></div>
+    </div>
+
+    <!-- 2. ODD ONE OUT -->
+    <div class="card" style="margin-bottom:22px;">
+      <div class="sub-title" style="color:#FF6B6B;">🚫 ¿Cuál no pertenece?</div>
+      <p style="color:#666;font-size:0.95em;margin-bottom:8px;">Toca el que es diferente a los demás 👇</p>
+      <div class="score-bar">
+        <span id="odd-stars" class="stars-display">☆☆☆☆☆</span>
+        <span id="odd-score" class="score-text">0 / 0 correctas</span>
+      </div>
+      <div id="odd-hint" style="text-align:center;font-size:1em;color:#845EC2;font-weight:700;margin:10px 0;background:#f3e8ff;border-radius:12px;padding:8px 14px;"></div>
+      <div class="odd-grid" id="odd-grid"></div>
+      <div class="feedback" id="odd-feedback"></div>
+    </div>
+
+    <!-- 3. COMPARE -->
+    <div class="card" style="margin-bottom:22px;">
+      <div class="sub-title" style="color:#FF9A3C;">⚖️ ¿Cuál grupo tiene más?</div>
+      <p style="color:#666;font-size:0.95em;margin-bottom:12px;">Toca el grupo que tenga más emojis 👇</p>
+      <div class="score-bar">
+        <span id="cmp-stars" class="stars-display">☆☆☆☆☆</span>
+        <span id="cmp-score" class="score-text">0 / 0 correctas</span>
+      </div>
+      <div class="compare-area" id="cmp-area"></div>
+      <div class="feedback" id="cmp-feedback"></div>
+    </div>
+
+    <!-- 4. ORDER NUMBERS -->
+    <div class="card">
+      <div class="sub-title" style="color:#4D96FF;">🔢 Ordena de menor a mayor</div>
+      <p style="color:#666;font-size:0.95em;margin-bottom:12px;">Toca los números en orden: del más pequeño al más grande 👇</p>
+      <div class="score-bar">
+        <span id="ord-stars" class="stars-display">☆☆☆☆☆</span>
+        <span id="ord-score" class="score-text">0 / 0 correctas</span>
+      </div>
+      <div class="order-target" id="ord-target"></div>
+      <div class="order-source" id="ord-source"></div>
+      <div class="feedback" id="ord-feedback"></div>
     </div>
   </div>
 
@@ -552,6 +713,261 @@
       scoreEl.textContent = `${correct} / ${total} correctas`;
     }
 
+    // ===== RAZONAMIENTO LÓGICO =====
+
+    // -- 1. PATRONES --
+    const PATTERN_SETS = [
+      ['🍎','🍊'], ['⭐','🌙'], ['🔴','🔵'], ['🐶','🐱'],
+      ['🌸','🌻'], ['🎈','🎀'], ['🟡','🟢'], ['🐥','🐸'],
+      ['🍎','🍊','🍋'], ['🐶','🐱','🐟'],
+      ['🌸','🌻','🌹'], ['⭐','💫','🌟'],
+      ['🔴','🔵','🟡'], ['🎈','🎊','🎉'],
+      ['🦁','🐘','🦒'], ['🚗','🚌','🚂'],
+    ];
+    let patCorrect=0, patTotal=0;
+
+    function loadPattern() {
+      const set = PATTERN_SETS[rand(0, PATTERN_SETS.length-1)];
+      const len = 5;
+      const seq = [];
+      for (let i=0; i<len; i++) seq.push(set[i % set.length]);
+      const answer = seq[len-1];
+      const shown  = seq.slice(0, len-1);
+
+      const row = document.getElementById('pat-row');
+      row.innerHTML = '';
+      shown.forEach(e => {
+        const el = document.createElement('span');
+        el.className = 'pattern-item';
+        el.textContent = e;
+        row.appendChild(el);
+      });
+      const arrow = document.createElement('span');
+      arrow.className = 'pattern-arrow';
+      arrow.textContent = '→';
+      row.appendChild(arrow);
+      const blank = document.createElement('span');
+      blank.className = 'pattern-blank';
+      blank.textContent = '❓';
+      row.appendChild(blank);
+
+      // 3 options: correct + 2 random wrong emojis not in this set
+      const wrongPool = EMOJIS.filter(e => !set.includes(e));
+      const wrong = shuffleArr(wrongPool).slice(0, 2);
+      const opts = shuffleArr([answer, ...wrong]);
+
+      const optsDiv = document.getElementById('pat-opts');
+      optsDiv.innerHTML = '';
+      opts.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'pattern-opt';
+        btn.textContent = opt;
+        btn.onclick = () => checkPattern(btn, opt === answer, answer);
+        optsDiv.appendChild(btn);
+      });
+      document.getElementById('pat-feedback').classList.remove('show');
+    }
+
+    function checkPattern(btn, correct, answer) {
+      patTotal++;
+      if (correct) { patCorrect++; playCorrect(); launchConfetti(1800); }
+      else {
+        playWrong();
+        document.querySelectorAll('#pat-opts .pattern-opt').forEach(b => {
+          if (b.textContent === answer) b.classList.add('correct');
+        });
+      }
+      btn.classList.add(correct ? 'correct' : 'wrong');
+      showFeedback(document.getElementById('pat-feedback'), correct);
+      document.querySelectorAll('#pat-opts .pattern-opt').forEach(b => b.onclick = null);
+      updateCustomStars(document.getElementById('pat-stars'), document.getElementById('pat-score'), patCorrect, patTotal);
+      setTimeout(loadPattern, 1800);
+    }
+
+    // -- 2. ODD ONE OUT --
+    const ODD_GROUPS = [
+      { items:['🐶','🐱','🐦','🚗'],   odd:3, q:'3 son animales... ¿cuál no lo es?' },
+      { items:['🍎','🍊','🍋','🚌'],   odd:3, q:'3 son frutas... ¿cuál no lo es?' },
+      { items:['🌸','🌻','🌹','⚽'],   odd:3, q:'3 son flores... ¿cuál no lo es?' },
+      { items:['🚗','🚌','🚂','🍕'],   odd:3, q:'3 son transportes... ¿cuál no lo es?' },
+      { items:['⚽','🏀','🎾','🐠'],   odd:3, q:'3 son pelotas... ¿cuál no lo es?' },
+      { items:['🍕','🍔','🌮','🦋'],   odd:3, q:'3 son comidas... ¿cuál no lo es?' },
+      { items:['🔴','🔵','🔴','🔴'],   odd:1, q:'Tres son iguales... ¿cuál es diferente?' },
+      { items:['⭐','⭐','🌙','⭐'],   odd:2, q:'Tres son iguales... ¿cuál es diferente?' },
+      { items:['🐘','🦁','🐬','🌵'],   odd:3, q:'3 son animales... ¿cuál no lo es?' },
+      { items:['📚','✏️','🎒','🍌'],   odd:3, q:'3 son del colegio... ¿cuál no lo es?' },
+      { items:['🌧️','🌨️','⛅','🚀'],  odd:3, q:'3 son del clima... ¿cuál no lo es?' },
+      { items:['🍇','🍓','🍒','🐸'],   odd:3, q:'3 son frutas... ¿cuál no lo es?' },
+      { items:['🚀','✈️','🚁','🐋'],   odd:3, q:'3 vuelan... ¿cuál no lo hace?' },
+      { items:['🟥','🟦','🟥','🟥'],   odd:1, q:'Tres son iguales... ¿cuál es diferente?' },
+    ];
+    let oddCorrect=0, oddTotal=0, oddAnswer=0;
+
+    function loadOddOne() {
+      const group = ODD_GROUPS[rand(0, ODD_GROUPS.length-1)];
+      oddAnswer = group.odd;
+      document.getElementById('odd-hint').textContent = '💡 ' + group.q;
+      const grid = document.getElementById('odd-grid');
+      grid.innerHTML = '';
+      group.items.forEach((item, i) => {
+        const el = document.createElement('div');
+        el.className = 'odd-item';
+        el.textContent = item;
+        el.onclick = () => checkOdd(el, i === group.odd);
+        grid.appendChild(el);
+      });
+      document.getElementById('odd-feedback').classList.remove('show');
+    }
+
+    function checkOdd(el, correct) {
+      oddTotal++;
+      if (correct) { oddCorrect++; playCorrect(); launchConfetti(1800); }
+      else {
+        playWrong();
+        document.querySelectorAll('#odd-grid .odd-item')[oddAnswer].classList.add('correct');
+      }
+      el.classList.add(correct ? 'correct' : 'wrong');
+      showFeedback(document.getElementById('odd-feedback'), correct);
+      document.querySelectorAll('#odd-grid .odd-item').forEach(b => b.onclick = null);
+      updateCustomStars(document.getElementById('odd-stars'), document.getElementById('odd-score'), oddCorrect, oddTotal);
+      setTimeout(loadOddOne, 1800);
+    }
+
+    // -- 3. COMPARE --
+    let cmpCorrect=0, cmpTotal=0, cmpAnswerSide=0;
+
+    function loadCompareProblem() {
+      let a, b;
+      do { a = rand(1,9); b = rand(1,9); } while (a === b);
+      cmpAnswerSide = a > b ? 0 : 1;
+      const emoji = EMOJIS[rand(0, EMOJIS.length-1)];
+
+      const area = document.getElementById('cmp-area');
+      area.innerHTML = '';
+
+      const leftG = document.createElement('div');
+      leftG.className = 'compare-group';
+      leftG.dataset.side = '0';
+      for (let i=0; i<a; i++) {
+        const s = document.createElement('span');
+        s.style.fontSize = '1.8em';
+        s.textContent = emoji;
+        leftG.appendChild(s);
+      }
+      leftG.onclick = () => checkCompare(leftG, 0 === cmpAnswerSide);
+
+      const vs = document.createElement('div');
+      vs.className = 'vs-badge';
+      vs.textContent = 'VS';
+
+      const rightG = document.createElement('div');
+      rightG.className = 'compare-group';
+      rightG.dataset.side = '1';
+      for (let i=0; i<b; i++) {
+        const s = document.createElement('span');
+        s.style.fontSize = '1.8em';
+        s.textContent = emoji;
+        rightG.appendChild(s);
+      }
+      rightG.onclick = () => checkCompare(rightG, 1 === cmpAnswerSide);
+
+      area.appendChild(leftG);
+      area.appendChild(vs);
+      area.appendChild(rightG);
+      document.getElementById('cmp-feedback').classList.remove('show');
+    }
+
+    function checkCompare(el, correct) {
+      cmpTotal++;
+      if (correct) { cmpCorrect++; playCorrect(); launchConfetti(1800); }
+      else { playWrong(); }
+      el.classList.add(correct ? 'correct' : 'wrong');
+      // Highlight correct group if wrong
+      if (!correct) {
+        document.querySelectorAll('#cmp-area .compare-group')[cmpAnswerSide].classList.add('correct');
+      }
+      showFeedback(document.getElementById('cmp-feedback'), correct);
+      document.querySelectorAll('#cmp-area .compare-group').forEach(g => g.onclick = null);
+      updateCustomStars(document.getElementById('cmp-stars'), document.getElementById('cmp-score'), cmpCorrect, cmpTotal);
+      setTimeout(loadCompareProblem, 1800);
+    }
+
+    // -- 4. ORDER NUMBERS --
+    let ordCorrect=0, ordTotal=0;
+    let ordExpected=[], ordPlaced=0;
+
+    function loadOrderProblem() {
+      ordPlaced = 0;
+      // Generate 4 unique numbers
+      let pool = [];
+      let tries = 0;
+      while (pool.length < 4 && tries < 100) {
+        const n = rand(1, 9);
+        if (!pool.includes(n)) pool.push(n);
+        tries++;
+      }
+      ordExpected = [...pool].sort((a,b) => a-b);
+
+      // Target slots
+      const target = document.getElementById('ord-target');
+      target.innerHTML = '';
+      const positions = ['1°','2°','3°','4°'];
+      for (let i=0; i<4; i++) {
+        const slot = document.createElement('div');
+        slot.className = 'order-slot';
+        slot.dataset.pos = i;
+        slot.innerHTML = `<span class="slot-pos">${positions[i]}</span>?`;
+        target.appendChild(slot);
+      }
+
+      // Source cards shuffled
+      const source = document.getElementById('ord-source');
+      source.innerHTML = '';
+      shuffleArr([...pool]).forEach(n => {
+        const card = document.createElement('div');
+        card.className = 'order-card';
+        card.textContent = n;
+        card.dataset.val = n;
+        card.onclick = () => placeOrderCard(card);
+        source.appendChild(card);
+      });
+
+      document.getElementById('ord-feedback').classList.remove('show');
+    }
+
+    function placeOrderCard(card) {
+      if (card.classList.contains('placed')) return;
+      const val = parseInt(card.dataset.val);
+      const expected = ordExpected[ordPlaced];
+
+      if (val === expected) {
+        playCorrect();
+        card.classList.add('placed');
+        const slots = document.querySelectorAll('#ord-target .order-slot');
+        slots[ordPlaced].innerHTML = `<span class="slot-pos">${ordPlaced+1}°</span>${val}`;
+        slots[ordPlaced].classList.add('filled');
+        ordPlaced++;
+        if (ordPlaced === 4) {
+          ordCorrect++; ordTotal++;
+          launchConfetti(2500);
+          showFeedback(document.getElementById('ord-feedback'), true);
+          updateCustomStars(document.getElementById('ord-stars'), document.getElementById('ord-score'), ordCorrect, ordTotal);
+          if (ordCorrect % 3 === 0) {
+            setTimeout(() => showCelebration('¡Eres un campeón!', '¡Ordenaste los números perfectamente! 🔢', '🏆'), 600);
+          }
+          setTimeout(loadOrderProblem, 2200);
+        }
+      } else {
+        playWrong();
+        card.style.animation = 'shake 0.4s';
+        setTimeout(() => card.style.animation = '', 500);
+        ordTotal++;
+        showFeedback(document.getElementById('ord-feedback'), false);
+        updateCustomStars(document.getElementById('ord-stars'), document.getElementById('ord-score'), ordCorrect, ordTotal);
+        setTimeout(loadOrderProblem, 1600);
+      }
+    }
+
     // ===== INIT =====
     buildNumberLine();
     buildNumberCards();
@@ -559,6 +975,10 @@
     loadSumProblem();
     loadSubProblem();
     loadQuizProblem();
+    loadPattern();
+    loadOddOne();
+    loadCompareProblem();
+    loadOrderProblem();
     initTabs('#FF9A3C');
   </script>
 </body>
