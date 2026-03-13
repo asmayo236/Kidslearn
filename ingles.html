@@ -116,6 +116,90 @@
     .mem-card.matched { background: #e8f8e8; border-color: #6BCB77; cursor: default; }
     .mem-card:hover:not(.matched) { transform: scale(1.05); }
 
+    /* ===== PHONICS ===== */
+    .phonics-nav { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:20px; }
+    .ph-pill {
+      background: white; border: 3px solid #e0e0e0; border-radius: 50px;
+      padding: 10px 20px; font-size: 0.92em; font-weight: 700; cursor: pointer;
+      transition: all 0.2s; color: #555;
+    }
+    .ph-pill.active { background: var(--blue); border-color: var(--blue); color: white; box-shadow: 0 4px 12px rgba(77,150,255,0.35); }
+    .ph-pill:hover:not(.active) { border-color: var(--blue); color: var(--blue); }
+
+    /* Letter sounds grid */
+    .ph-letter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 12px; }
+    .ph-letter-card {
+      background: white; border-radius: 18px; padding: 14px 10px; text-align: center;
+      cursor: pointer; box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+      transition: transform 0.2s, box-shadow 0.2s; border: 3px solid #e8f0ff; user-select: none;
+    }
+    .ph-letter-card:hover { transform: scale(1.07); box-shadow: 0 6px 18px rgba(77,150,255,0.25); border-color: var(--blue); }
+    .ph-letter-card.playing { background: #e8f4ff; border-color: #4D96FF; transform: scale(1.08); }
+    .ph-big-letter { font-size: 2em; font-weight: 900; color: #4D96FF; line-height: 1; }
+    .ph-sound { font-size: 0.72em; color: #888; margin: 3px 0; font-style: italic; }
+    .ph-keyword-emoji { font-size: 1.7em; }
+    .ph-keyword { font-size: 0.78em; font-weight: 700; color: #444; margin-top: 3px; }
+
+    /* Short vowels */
+    .vowel-tabs { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+    .vowel-tab {
+      width: 52px; height: 52px; border-radius: 50%; border: none; color: white;
+      font-size: 1.5em; font-weight: 900; cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2); transition: transform 0.2s; opacity: 0.65;
+    }
+    .vowel-tab.active { opacity: 1; transform: scale(1.18); box-shadow: 0 6px 16px rgba(0,0,0,0.3); }
+    .vowel-tab:hover { opacity: 0.9; transform: scale(1.1); }
+    .vowel-header { border-radius: 20px; padding: 18px; margin-bottom: 14px; text-align: center; }
+    .vowel-big { font-size: 3em; font-weight: 900; color: white; text-shadow: 2px 2px 8px rgba(0,0,0,0.2); }
+    .vowel-desc { font-size: 0.95em; font-weight: 700; color: rgba(255,255,255,0.9); margin-top: 4px; }
+
+    /* Shared word card grid */
+    .ph-word-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(105px, 1fr)); gap: 12px; }
+    .ph-word-card {
+      background: white; border-radius: 16px; padding: 14px 10px; text-align: center;
+      cursor: pointer; box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      border: 3px solid transparent; transition: transform 0.2s; user-select: none;
+    }
+    .ph-word-card:hover { transform: scale(1.07); }
+    .ph-word-card.playing { border-color: #4D96FF; background: #e8f4ff; }
+    .ph-word-emoji { font-size: 2.1em; }
+    .ph-word-text { font-size: 1.2em; font-weight: 900; color: #333; margin-top: 6px; }
+
+    /* Word families */
+    .family-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+    .fam-pill {
+      background: white; border: 3px solid #e0e0e0; border-radius: 50px;
+      padding: 8px 18px; font-size: 1.1em; font-weight: 900; cursor: pointer;
+      transition: all 0.15s; color: #555;
+    }
+    .fam-pill.active { color: white; border-color: transparent; }
+    .family-header { border-radius: 20px; padding: 18px; margin-bottom: 14px; text-align: center; }
+    .family-pattern { font-size: 2.8em; font-weight: 900; color: white; text-shadow: 2px 2px 8px rgba(0,0,0,0.2); letter-spacing: 3px; }
+    .family-desc { font-size: 0.95em; font-weight: 700; color: rgba(255,255,255,0.9); margin-top: 6px; }
+
+    /* Blend & Read */
+    .blend-card {
+      background: white; border-radius: 24px; padding: 28px 20px; text-align: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.12); margin-bottom: 18px;
+    }
+    .blend-emoji { font-size: 4.5em; margin-bottom: 12px; }
+    .blend-phonemes { display: flex; justify-content: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+    .phoneme-box {
+      width: 68px; height: 68px; background: #f0f4ff; border: 3px solid #c8d9ff;
+      border-radius: 16px; display: flex; align-items: center; justify-content: center;
+      font-size: 1.9em; font-weight: 900; color: #4D96FF; cursor: pointer;
+      transition: all 0.2s; user-select: none;
+    }
+    .phoneme-box:hover { background: #dce8ff; border-color: #4D96FF; transform: scale(1.08); }
+    .phoneme-box.active { background: #4D96FF; color: white; border-color: #2c7be5; transform: scale(1.15); }
+    .phoneme-box.blended { background: #e8f8e8; border-color: #6BCB77; color: #27ae60; }
+    .blend-word-show {
+      font-size: 2.4em; font-weight: 900; color: #27ae60; margin-bottom: 14px;
+      transition: opacity 0.4s; min-height: 1.3em; letter-spacing: 2px;
+    }
+    .blend-btn { font-size: 1.1em; padding: 12px 30px; }
+    .blend-nav { display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap; }
+
     /* Quiz */
     .quiz-card-wrap {
       background: white;
@@ -159,6 +243,7 @@
     <button class="tab-btn" data-tab="tab-colors">🎨 Colors</button>
     <button class="tab-btn" data-tab="tab-memory">🎮 Memory</button>
     <button class="tab-btn" data-tab="tab-quiz">🎯 Quiz</button>
+    <button class="tab-btn" data-tab="tab-phonics">🔊 Phonics</button>
   </div>
 
   <!-- ===== TAB 1: VOCABULARIO ===== -->
@@ -232,6 +317,62 @@
       <div class="quiz-question" id="quiz-question">¿Cómo se dice "Perro" en inglés?</div>
       <div class="options-grid"  id="quiz-options" style="max-width:400px;margin:0 auto;"></div>
       <div class="feedback"      id="quiz-feedback"></div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 6: PHONICS ===== -->
+  <div id="tab-phonics" class="tab-content">
+    <div class="section-title">🔊 Phonics – ¡Aprende a leer en inglés!</div>
+    <p style="color:#666;margin-bottom:15px;">Aprende los sonidos de las letras y lee tus primeras palabras en inglés 🎉</p>
+
+    <!-- Sub-section pills -->
+    <div class="phonics-nav">
+      <button class="ph-pill active" onclick="showPhSection('ph-sounds',this)">🔤 Letter Sounds</button>
+      <button class="ph-pill" onclick="showPhSection('ph-vowels',this)">🔵 Short Vowels</button>
+      <button class="ph-pill" onclick="showPhSection('ph-families',this)">🎵 Word Families</button>
+      <button class="ph-pill" onclick="showPhSection('ph-blend',this)">🔀 Blend &amp; Read</button>
+    </div>
+
+    <!-- 1. Letter Sounds -->
+    <div id="ph-sounds" class="ph-section">
+      <p style="color:#666;font-size:0.9em;margin-bottom:14px;">Toca cada letra para escuchar su sonido 👂</p>
+      <div class="ph-letter-grid" id="ph-letter-grid"></div>
+    </div>
+
+    <!-- 2. Short Vowels -->
+    <div id="ph-vowels" class="ph-section" style="display:none;">
+      <p style="color:#666;font-size:0.9em;margin-bottom:14px;">Aprende palabras cortas con cada vocal 🔤</p>
+      <div class="vowel-tabs">
+        <button class="vowel-tab active" onclick="showVowel('A',this)" style="background:#FF6B6B">A</button>
+        <button class="vowel-tab" onclick="showVowel('E',this)" style="background:#FF9F43">E</button>
+        <button class="vowel-tab" onclick="showVowel('I',this)" style="background:#6AB04C">I</button>
+        <button class="vowel-tab" onclick="showVowel('O',this)" style="background:#4D96FF">O</button>
+        <button class="vowel-tab" onclick="showVowel('U',this)" style="background:#A29BFE">U</button>
+      </div>
+      <div id="vowel-content"></div>
+    </div>
+
+    <!-- 3. Word Families -->
+    <div id="ph-families" class="ph-section" style="display:none;">
+      <p style="color:#666;font-size:0.9em;margin-bottom:14px;">¡Todas estas palabras riman! 🎵</p>
+      <div class="family-pills" id="family-pills"></div>
+      <div id="family-content"></div>
+    </div>
+
+    <!-- 4. Blend & Read -->
+    <div id="ph-blend" class="ph-section" style="display:none;">
+      <p style="color:#666;font-size:0.9em;margin-bottom:14px;">Toca cada sonido, luego pulsa <strong>Blend!</strong> para leer la palabra 🔀</p>
+      <div class="blend-card">
+        <div class="blend-emoji" id="blend-emoji">🐱</div>
+        <div class="blend-phonemes" id="blend-phonemes"></div>
+        <div class="blend-word-show" id="blend-word-show" style="opacity:0;">cat</div>
+        <button class="btn btn-primary blend-btn" id="blend-btn" onclick="doBlend()">🔀 Blend!</button>
+      </div>
+      <div class="blend-nav">
+        <button class="btn btn-orange" onclick="prevBlend()">◀ Anterior</button>
+        <span id="blend-counter" style="font-weight:800;color:#4D96FF;">1 / 20</span>
+        <button class="btn btn-primary" onclick="nextBlend()">Siguiente ▶</button>
+      </div>
     </div>
   </div>
 
@@ -566,6 +707,286 @@
       setTimeout(loadQuizQ, 1800);
     }
 
+    // ===== PHONICS DATA =====
+    const PHONICS_LETTERS = [
+      {l:'A', sound:'/æ/', keyword:'Apple',    e:'🍎'},
+      {l:'B', sound:'/b/', keyword:'Ball',     e:'⚽'},
+      {l:'C', sound:'/k/', keyword:'Cat',      e:'🐱'},
+      {l:'D', sound:'/d/', keyword:'Dog',      e:'🐶'},
+      {l:'E', sound:'/ɛ/', keyword:'Egg',      e:'🥚'},
+      {l:'F', sound:'/f/', keyword:'Fish',     e:'🐟'},
+      {l:'G', sound:'/g/', keyword:'Goat',     e:'🐐'},
+      {l:'H', sound:'/h/', keyword:'Hat',      e:'🎩'},
+      {l:'I', sound:'/ɪ/', keyword:'Igloo',    e:'🏔️'},
+      {l:'J', sound:'/dʒ/',keyword:'Jam',      e:'🫙'},
+      {l:'K', sound:'/k/', keyword:'Key',      e:'🔑'},
+      {l:'L', sound:'/l/', keyword:'Lion',     e:'🦁'},
+      {l:'M', sound:'/m/', keyword:'Moon',     e:'🌙'},
+      {l:'N', sound:'/n/', keyword:'Nose',     e:'👃'},
+      {l:'O', sound:'/ɒ/', keyword:'Octopus',  e:'🐙'},
+      {l:'P', sound:'/p/', keyword:'Pig',      e:'🐷'},
+      {l:'Q', sound:'/kw/',keyword:'Queen',    e:'👑'},
+      {l:'R', sound:'/r/', keyword:'Rabbit',   e:'🐰'},
+      {l:'S', sound:'/s/', keyword:'Sun',      e:'☀️'},
+      {l:'T', sound:'/t/', keyword:'Tiger',    e:'🐯'},
+      {l:'U', sound:'/ʌ/', keyword:'Umbrella', e:'☂️'},
+      {l:'V', sound:'/v/', keyword:'Van',      e:'🚐'},
+      {l:'W', sound:'/w/', keyword:'Water',    e:'💧'},
+      {l:'X', sound:'/ks/',keyword:'Fox',      e:'🦊'},
+      {l:'Y', sound:'/j/', keyword:'Yellow',   e:'💛'},
+      {l:'Z', sound:'/z/', keyword:'Zebra',    e:'🦓'},
+    ];
+
+    const PHONEME_TTS = {
+      'a':'aah','b':'buh','c':'kuh','ch':'chh','d':'duh',
+      'e':'eh', 'f':'fff','g':'guh','h':'huh','i':'ih',
+      'j':'juh','k':'kuh','l':'lll','m':'mmm','n':'nnn',
+      'o':'awh','p':'puh','r':'rrr','s':'sss','sh':'shh',
+      't':'tuh','th':'thh','u':'uh', 'v':'vvv','w':'wuh',
+      'x':'ks', 'y':'yuh','z':'zzz',
+      'cr':'krrr','fr':'frrr','dr':'drrr','sn':'snnn','bl':'bluh','tr':'trrr',
+    };
+
+    function speakPhoneme(sound) {
+      const tts = PHONEME_TTS[sound.toLowerCase()] || sound;
+      speakEn(tts, 0.45, 1.05);
+    }
+
+    const SHORT_VOWELS = [
+      {vowel:'A', color:'#FF6B6B', sound:'short a', ex:'as in cat', words:[
+        {w:'cat',e:'🐱'},{w:'hat',e:'🎩'},{w:'bat',e:'🦇'},
+        {w:'map',e:'🗺️'},{w:'cap',e:'🧢'},{w:'lap',e:'🦵'}
+      ]},
+      {vowel:'E', color:'#FF9F43', sound:'short e', ex:'as in bed', words:[
+        {w:'bed',e:'🛏️'},{w:'red',e:'🔴'},{w:'hen',e:'🐔'},
+        {w:'ten',e:'🔟'},{w:'leg',e:'🦵'},{w:'net',e:'🕸️'}
+      ]},
+      {vowel:'I', color:'#6AB04C', sound:'short i', ex:'as in pig', words:[
+        {w:'big',e:'🔭'},{w:'pig',e:'🐷'},{w:'fin',e:'🐟'},
+        {w:'win',e:'🏆'},{w:'dip',e:'💧'},{w:'lip',e:'💋'}
+      ]},
+      {vowel:'O', color:'#4D96FF', sound:'short o', ex:'as in dog', words:[
+        {w:'hot',e:'🌡️'},{w:'pot',e:'🍲'},{w:'dog',e:'🐶'},
+        {w:'log',e:'🪵'},{w:'box',e:'📦'},{w:'fox',e:'🦊'}
+      ]},
+      {vowel:'U', color:'#A29BFE', sound:'short u', ex:'as in cup', words:[
+        {w:'cup',e:'☕'},{w:'pup',e:'🐶'},{w:'run',e:'🏃'},
+        {w:'sun',e:'☀️'},{w:'bug',e:'🐛'},{w:'hug',e:'🤗'}
+      ]},
+    ];
+
+    const WORD_FAMILIES = [
+      {family:'-at',color:'#FF6B6B',words:['cat','bat','hat','rat','mat','sat'],emojis:['🐱','🦇','🎩','🐀','🧺','💺']},
+      {family:'-an',color:'#FF9F43',words:['can','fan','man','pan','ran','van'],emojis:['🥫','💨','🧑','🍳','🏃','🚐']},
+      {family:'-ig',color:'#6AB04C',words:['big','dig','fig','pig','wig','jig'],emojis:['🔭','⛏️','🌿','🐷','💇','🕺']},
+      {family:'-ot',color:'#4D96FF',words:['dot','hot','lot','pot','got','cot'],emojis:['⚫','🌡️','🎲','🍲','✅','🛏️']},
+      {family:'-un',color:'#A29BFE',words:['bun','fun','run','sun','pun','nun'],emojis:['🍞','🎉','🏃','☀️','😄','🙏']},
+      {family:'-en',color:'#00CEC9',words:['hen','men','pen','ten','den','web'],emojis:['🐔','👨','🖊️','🔟','🦁','🕸️']},
+    ];
+
+    const BLEND_WORDS = [
+      {word:'cat',  parts:['c','a','t'],   e:'🐱'},
+      {word:'dog',  parts:['d','o','g'],   e:'🐶'},
+      {word:'sun',  parts:['s','u','n'],   e:'☀️'},
+      {word:'hat',  parts:['h','a','t'],   e:'🎩'},
+      {word:'big',  parts:['b','i','g'],   e:'🔭'},
+      {word:'red',  parts:['r','e','d'],   e:'🔴'},
+      {word:'hop',  parts:['h','o','p'],   e:'🐸'},
+      {word:'cup',  parts:['c','u','p'],   e:'☕'},
+      {word:'ten',  parts:['t','e','n'],   e:'🔟'},
+      {word:'fin',  parts:['f','i','n'],   e:'🐟'},
+      {word:'mop',  parts:['m','o','p'],   e:'🧹'},
+      {word:'bug',  parts:['b','u','g'],   e:'🐛'},
+      {word:'ship', parts:['sh','i','p'],  e:'🚢'},
+      {word:'chin', parts:['ch','i','n'],  e:'😊'},
+      {word:'fish', parts:['f','i','sh'],  e:'🐠'},
+      {word:'that', parts:['th','a','t'],  e:'👇'},
+      {word:'frog', parts:['fr','o','g'],  e:'🐸'},
+      {word:'crab', parts:['cr','a','b'],  e:'🦀'},
+      {word:'drip', parts:['dr','i','p'],  e:'💧'},
+      {word:'snap', parts:['sn','a','p'],  e:'👌'},
+    ];
+
+    // ===== PHONICS FUNCTIONS =====
+    let currentVowel = 'A';
+    let currentFamily = 0;
+    let blendIdx = 0;
+
+    function showPhSection(id, btn) {
+      document.querySelectorAll('.ph-section').forEach(s => s.style.display = 'none');
+      document.querySelectorAll('.ph-pill').forEach(b => b.classList.remove('active'));
+      document.getElementById(id).style.display = '';
+      btn.classList.add('active');
+      playClick();
+    }
+
+    function buildPhLetterGrid() {
+      const grid = document.getElementById('ph-letter-grid');
+      PHONICS_LETTERS.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'ph-letter-card';
+        card.innerHTML = `
+          <div class="ph-big-letter">${item.l}</div>
+          <div class="ph-sound">${item.sound}</div>
+          <div class="ph-keyword-emoji">${item.e}</div>
+          <div class="ph-keyword">${item.keyword}</div>`;
+        card.onclick = () => {
+          playClick();
+          document.querySelectorAll('.ph-letter-card').forEach(c => c.classList.remove('playing'));
+          card.classList.add('playing');
+          speakEn(`${item.l} says... ${item.keyword}`, 0.72, 1.1);
+          setTimeout(() => card.classList.remove('playing'), 2000);
+        };
+        grid.appendChild(card);
+      });
+    }
+
+    function showVowel(v, btn) {
+      currentVowel = v;
+      document.querySelectorAll('.vowel-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      playClick();
+      renderVowelContent();
+      const vdata = SHORT_VOWELS.find(x => x.vowel === v);
+      speakEn(`Short ${v}. ${vdata.ex}`, 0.78, 1.1);
+    }
+
+    function renderVowelContent() {
+      const vdata = SHORT_VOWELS.find(x => x.vowel === currentVowel);
+      const cont = document.getElementById('vowel-content');
+      cont.innerHTML = `
+        <div class="vowel-header" style="background:linear-gradient(135deg,${vdata.color},${vdata.color}99);">
+          <div class="vowel-big">${vdata.vowel}</div>
+          <div class="vowel-desc">${vdata.sound} · ${vdata.ex}</div>
+        </div>
+        <div class="ph-word-grid" id="vowel-word-grid"></div>`;
+      const grid = cont.querySelector('#vowel-word-grid');
+      vdata.words.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'ph-word-card';
+        const highlighted = item.w.replace(new RegExp(vdata.vowel.toLowerCase(), 'i'),
+          `<span style="color:${vdata.color};font-size:1.2em;">${vdata.vowel.toLowerCase()}</span>`);
+        card.innerHTML = `<div class="ph-word-emoji">${item.e}</div><div class="ph-word-text">${highlighted}</div>`;
+        card.onclick = () => {
+          playClick();
+          card.classList.add('playing');
+          speakEn(item.w, 0.65, 1.05);
+          setTimeout(() => card.classList.remove('playing'), 1500);
+        };
+        grid.appendChild(card);
+      });
+    }
+
+    function buildFamilyPills() {
+      const pills = document.getElementById('family-pills');
+      WORD_FAMILIES.forEach((fam, i) => {
+        const pill = document.createElement('button');
+        pill.className = 'fam-pill' + (i === 0 ? ' active' : '');
+        pill.textContent = fam.family;
+        if (i === 0) { pill.style.background = fam.color; pill.style.borderColor = fam.color; pill.style.color = 'white'; }
+        pill.onclick = () => {
+          currentFamily = i;
+          document.querySelectorAll('.fam-pill').forEach((p, pi) => {
+            p.classList.remove('active');
+            p.style.background = p.style.borderColor = p.style.color = '';
+          });
+          pill.classList.add('active');
+          pill.style.background = fam.color; pill.style.borderColor = fam.color; pill.style.color = 'white';
+          playClick();
+          renderFamilyContent();
+          speakEn(fam.family + ' family', 0.75, 1.1);
+        };
+        pills.appendChild(pill);
+      });
+    }
+
+    function renderFamilyContent() {
+      const fam = WORD_FAMILIES[currentFamily];
+      const suffix = fam.family.replace('-', '');
+      const cont = document.getElementById('family-content');
+      cont.innerHTML = `
+        <div class="family-header" style="background:linear-gradient(135deg,${fam.color},${fam.color}99);">
+          <div class="family-pattern">${fam.family}</div>
+          <div class="family-desc">All these words end in "${suffix}"! 🎵</div>
+        </div>
+        <div class="ph-word-grid"></div>`;
+      const grid = cont.querySelector('.ph-word-grid');
+      fam.words.forEach((word, i) => {
+        const prefix = word.slice(0, word.length - suffix.length);
+        const card = document.createElement('div');
+        card.className = 'ph-word-card';
+        card.innerHTML = `
+          <div class="ph-word-emoji">${fam.emojis[i]}</div>
+          <div class="ph-word-text">
+            <span style="color:#333;">${prefix}</span><span style="color:${fam.color};">${suffix}</span>
+          </div>`;
+        card.onclick = () => {
+          playClick();
+          card.classList.add('playing');
+          speakEn(word, 0.68, 1.05);
+          setTimeout(() => card.classList.remove('playing'), 1500);
+        };
+        grid.appendChild(card);
+      });
+    }
+
+    // ===== BLEND & READ =====
+    function loadBlendWord() {
+      const item = BLEND_WORDS[blendIdx];
+      document.getElementById('blend-emoji').textContent = item.e;
+      document.getElementById('blend-counter').textContent = `${blendIdx + 1} / ${BLEND_WORDS.length}`;
+      const wordShow = document.getElementById('blend-word-show');
+      wordShow.textContent = item.word; wordShow.style.opacity = '0';
+      const btn = document.getElementById('blend-btn');
+      btn.textContent = '🔀 Blend!'; btn.disabled = false;
+      const phonDiv = document.getElementById('blend-phonemes');
+      phonDiv.innerHTML = '';
+      item.parts.forEach(part => {
+        const box = document.createElement('div');
+        box.className = 'phoneme-box';
+        box.textContent = part;
+        box.onclick = () => {
+          playClick();
+          document.querySelectorAll('.phoneme-box').forEach(b => b.classList.remove('active'));
+          box.classList.add('active');
+          speakPhoneme(part);
+          setTimeout(() => box.classList.remove('active'), 800);
+        };
+        phonDiv.appendChild(box);
+      });
+    }
+
+    async function doBlend() {
+      const item = BLEND_WORDS[blendIdx];
+      const btn = document.getElementById('blend-btn');
+      btn.disabled = true;
+      const boxes = document.querySelectorAll('.phoneme-box');
+      for (let i = 0; i < item.parts.length; i++) {
+        boxes.forEach(b => b.classList.remove('active'));
+        boxes[i].classList.add('active');
+        speakPhoneme(item.parts[i]);
+        await new Promise(r => setTimeout(r, 750));
+      }
+      await new Promise(r => setTimeout(r, 350));
+      boxes.forEach(b => { b.classList.remove('active'); b.classList.add('blended'); });
+      speakEn(item.word, 0.68, 1.05);
+      document.getElementById('blend-word-show').style.opacity = '1';
+      playCorrect();
+      btn.textContent = '✅ Done!';
+      launchConfetti(1500);
+    }
+
+    function nextBlend() { blendIdx = (blendIdx + 1) % BLEND_WORDS.length; loadBlendWord(); playClick(); }
+    function prevBlend() { blendIdx = (blendIdx - 1 + BLEND_WORDS.length) % BLEND_WORDS.length; loadBlendWord(); playClick(); }
+
+    function initPhonics() {
+      buildPhLetterGrid();
+      buildFamilyPills();
+      renderVowelContent();
+      renderFamilyContent();
+      loadBlendWord();
+    }
+
     // ===== INIT =====
     buildCatFilter();
     buildVocabGrid();
@@ -573,6 +994,7 @@
     buildColors();
     initMemory();
     initQuiz();
+    initPhonics();
     initTabs('#4D96FF');
   </script>
 </body>
