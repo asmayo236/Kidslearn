@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#845EC2"/>
+      <stop offset="100%" stop-color="#FF6FB4"/>
+    </linearGradient>
+  </defs>
+  <!-- Rounded background -->
+  <rect width="512" height="512" rx="115" fill="url(#g)"/>
+  <!-- Robot head -->
+  <rect x="126" y="150" width="260" height="215" rx="42" fill="white" opacity="0.95"/>
+  <!-- Antenna stem -->
+  <rect x="242" y="82" width="28" height="74" rx="14" fill="white" opacity="0.9"/>
+  <!-- Antenna ball -->
+  <circle cx="256" cy="68" r="30" fill="#FFD93D"/>
+  <circle cx="256" cy="68" r="16" fill="#FF9A3C"/>
+  <!-- Eyes -->
+  <circle cx="198" cy="222" r="34" fill="#4D96FF"/>
+  <circle cx="314" cy="222" r="34" fill="#4D96FF"/>
+  <circle cx="198" cy="222" r="17" fill="#1a1a2e"/>
+  <circle cx="314" cy="222" r="17" fill="#1a1a2e"/>
+  <!-- Eye shine -->
+  <circle cx="206" cy="213" r="8" fill="white"/>
+  <circle cx="322" cy="213" r="8" fill="white"/>
+  <!-- Smile -->
+  <path d="M188 282 Q256 326 324 282" stroke="#6BCB77" stroke-width="20" fill="none" stroke-linecap="round"/>
+  <!-- Ear buttons -->
+  <circle cx="94"  cy="232" r="24" fill="white" opacity="0.6"/>
+  <circle cx="418" cy="232" r="24" fill="white" opacity="0.6"/>
+</svg>
