@@ -1,4 +1,5 @@
 /* ===== BRUNO APRENDE - Estilos Compartidos ===== */
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
 
 * {
   margin: 0;
@@ -23,7 +24,7 @@
 }
 
 body {
-  font-family: 'Segoe UI', 'Trebuchet MS', 'Comic Sans MS', cursive, sans-serif;
+  font-family: 'Nunito', 'Segoe UI', Roboto, Arial, sans-serif;
   background: var(--bg);
   min-height: 100vh;
   color: var(--text);
