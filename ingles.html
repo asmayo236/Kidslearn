@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Inglés – Bruno Aprende 🌍</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    :root { --c1: #4D96FF; --c2: #00C9A7; }
+
+    /* Category chips */
+    .cat-filter { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+    .cat-chip {
+      background: white;
+      border: 3px solid #e0e0e0;
+      border-radius: 50px;
+      padding: 8px 18px;
+      font-size: 0.95em;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+      color: #555;
+    }
+    .cat-chip.active { background: var(--blue); border-color: var(--blue); color: white; box-shadow: 0 4px 12px rgba(77,150,255,0.35); }
+    .cat-chip:hover:not(.active) { border-color: var(--blue); color: var(--blue); }
+
+    /* Vocab grid */
+    .vocab-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+    .vocab-card {
+      background: white;
+      border-radius: 20px;
+      padding: 20px 12px;
+      text-align: center;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 3px solid transparent;
+      user-select: none;
+    }
+    .vocab-card:hover { transform: scale(1.06); box-shadow: 0 8px 22px rgba(0,0,0,0.16); border-color: var(--blue); }
+    .vocab-card .vc-emoji { font-size: 3em; display: block; margin-bottom: 8px; }
+    .vocab-card .vc-en { font-size: 1.1em; font-weight: 900; color: var(--blue); margin-bottom: 4px; }
+    .vocab-card .vc-es { font-size: 0.85em; font-weight: 600; color: #888; }
+
+    /* Word popup */
+    .word-popup {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%,-50%) scale(0);
+      background: linear-gradient(135deg, #4D96FF, #00C9A7);
+      color: white;
+      border-radius: 28px;
+      padding: 35px 45px;
+      text-align: center;
+      z-index: 999;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.3);
+      transition: transform 0.3s;
+      min-width: 220px;
+    }
+    .word-popup.show { transform: translate(-50%,-50%) scale(1); }
+    .word-popup .wp-emoji { font-size: 4em; }
+    .word-popup .wp-en  { font-size: 2.2em; font-weight: 900; margin-top: 8px; }
+    .word-popup .wp-es  { font-size: 1.2em; font-weight: 600; opacity: 0.85; margin-top: 4px; }
+
+    /* Flashcard nav */
+    .fc-nav { display: flex; align-items: center; justify-content: center; gap: 15px; margin: 15px 0; flex-wrap: wrap; }
+    .fc-nav .fc-counter { font-size: 1.1em; font-weight: 800; color: var(--blue); }
+    .fc-hint { text-align: center; font-size: 0.95em; color: #888; margin-bottom: 15px; }
+
+    /* Color swatches */
+    .color-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+    .color-swatch {
+      border-radius: 20px;
+      padding: 30px 15px;
+      text-align: center;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+      cursor: pointer;
+      transition: transform 0.2s;
+      color: white;
+      text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+    }
+    .color-swatch:hover { transform: scale(1.07); }
+    .color-swatch .cs-en { font-size: 1.3em; font-weight: 900; }
+    .color-swatch .cs-es { font-size: 0.9em; font-weight: 600; opacity: 0.9; margin-top: 4px; }
+
+    /* Memory game */
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+    .mem-card {
+      aspect-ratio: 1;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3em;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.2s;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      user-select: none;
+    }
+    .mem-card.face-down { background: linear-gradient(135deg, #4D96FF, #845EC2); color: white; font-size: 1.8em; }
+    .mem-card.face-up { background: white; border: 3px solid #e0e0e0; }
+    .mem-card.matched { background: #e8f8e8; border-color: #6BCB77; cursor: default; }
+    .mem-card:hover:not(.matched) { transform: scale(1.05); }
+
+    /* Quiz */
+    .quiz-card-wrap {
+      background: white;
+      border-radius: 24px;
+      padding: 25px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .quiz-emoji { font-size: 5em; margin-bottom: 10px; }
+    .quiz-question { font-size: 1.3em; font-weight: 800; color: #555; margin-bottom: 20px; }
+  </style>
+</head>
+<body>
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Word popup -->
+  <div class="word-popup" id="word-popup">
+    <div class="wp-emoji" id="wp-emoji">🐶</div>
+    <div class="wp-en"   id="wp-en">Dog</div>
+    <div class="wp-es"   id="wp-es">Perro</div>
+  </div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="index.html" class="btn-home">🏠 Inicio</a>
+    <span class="logo">🌍 Inglés</span>
+  </nav>
+
+  <!-- Header -->
+  <div class="page-header" style="--c1:#4D96FF;--c2:#00C9A7;">
+    <span class="page-icon">🌍</span>
+    <h1>Let's Learn English!</h1>
+    <p>¡Aprende palabras en inglés!</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="tab-vocab">📦 Vocabulario</button>
+    <button class="tab-btn" data-tab="tab-flash">🃏 Flashcards</button>
+    <button class="tab-btn" data-tab="tab-colors">🎨 Colors</button>
+    <button class="tab-btn" data-tab="tab-memory">🎮 Memory</button>
+    <button class="tab-btn" data-tab="tab-quiz">🎯 Quiz</button>
+  </div>
+
+  <!-- ===== TAB 1: VOCABULARIO ===== -->
+  <div id="tab-vocab" class="tab-content active">
+    <div class="section-title">📦 Palabras en Inglés</div>
+    <p style="color:#666;margin-bottom:15px;">Toca cada imagen para ver cómo se dice en inglés 👇</p>
+
+    <div class="cat-filter" id="cat-filter"></div>
+    <div class="vocab-grid" id="vocab-grid"></div>
+  </div>
+
+  <!-- ===== TAB 2: FLASHCARDS ===== -->
+  <div id="tab-flash" class="tab-content">
+    <div class="section-title">🃏 Flashcards</div>
+    <div class="fc-hint">Toca la tarjeta para verla en Español 👆</div>
+
+    <div class="fc-nav">
+      <button class="btn btn-primary" onclick="prevFlash()">◀ Anterior</button>
+      <span class="fc-counter" id="fc-counter">1 / 1</span>
+      <button class="btn btn-primary" onclick="nextFlash()">Siguiente ▶</button>
+    </div>
+
+    <div class="flashcard-wrap" onclick="flipCard()" id="fc-wrap">
+      <div class="flashcard" id="fc-card">
+        <div class="card-face card-front">
+          <div class="big-emoji" id="fc-emoji-front">🐶</div>
+          <div class="word-en"   id="fc-word-en">Dog</div>
+          <div class="hint">👆 Toca para ver la traducción</div>
+        </div>
+        <div class="card-face card-back">
+          <div class="big-emoji" id="fc-emoji-back">🐶</div>
+          <div class="word-en"   id="fc-word-es">Perro</div>
+          <div class="hint">En Español:</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 3: COLORS ===== -->
+  <div id="tab-colors" class="tab-content">
+    <div class="section-title">🎨 Los Colores / Colors</div>
+    <p style="color:#666;margin-bottom:15px;">Toca cada color para aprender cómo se dice en inglés 🎨</p>
+    <div class="color-grid" id="color-grid"></div>
+  </div>
+
+  <!-- ===== TAB 4: MEMORY ===== -->
+  <div id="tab-memory" class="tab-content">
+    <div class="section-title">🎮 Juego de Memoria</div>
+    <p style="color:#666;margin-bottom:15px;">Encuentra los pares: imagen + palabra en inglés 👇</p>
+
+    <div class="score-bar">
+      <span id="mem-pairs" class="score-text">Pares: 0 / 8</span>
+      <button class="btn btn-orange" onclick="initMemory()" style="padding:8px 18px;font-size:0.9em;">🔄 Reiniciar</button>
+    </div>
+
+    <div class="memory-grid" id="memory-grid"></div>
+  </div>
+
+  <!-- ===== TAB 5: QUIZ ===== -->
+  <div id="tab-quiz" class="tab-content">
+    <div class="section-title">🎯 ¡Quiz de Inglés!</div>
+    <p style="color:#666;margin-bottom:15px;">¿Cuál es la traducción al inglés? 🤔</p>
+
+    <div class="score-bar">
+      <span id="quiz-stars" class="stars-display">☆☆☆☆☆</span>
+      <span id="quiz-score" class="score-text">0 / 0 correctas</span>
+    </div>
+
+    <div class="quiz-card-wrap">
+      <div class="quiz-emoji"    id="quiz-emoji">🐶</div>
+      <div class="quiz-question" id="quiz-question">¿Cómo se dice "Perro" en inglés?</div>
+      <div class="options-grid"  id="quiz-options" style="max-width:400px;margin:0 auto;"></div>
+      <div class="feedback"      id="quiz-feedback"></div>
+    </div>
+  </div>
+
+  <!-- Celebration Modal -->
+  <div class="modal-overlay" id="celebration-modal">
+    <div class="modal-box">
+      <div class="cel-emoji" style="font-size:5em;">🌟</div>
+      <h2 class="cel-msg">¡Excelente!</h2>
+      <p class="cel-sub">¡Muy bien hecho, Bruno!</p>
+      <button class="btn btn-primary" onclick="hideCelebration()">¡Seguimos! 🚀</button>
+    </div>
+  </div>
+
+  <script src="utils.js"></script>
+  <script>
+    // ===== VOCABULARY DATA =====
+    const VOCAB = [
+      // Animals
+      {cat:'Animales',en:'Dog',    es:'Perro',    e:'🐶'},
+      {cat:'Animales',en:'Cat',    es:'Gato',     e:'🐱'},
+      {cat:'Animales',en:'Bird',   es:'Pájaro',   e:'🐦'},
+      {cat:'Animales',en:'Fish',   es:'Pez',      e:'🐟'},
+      {cat:'Animales',en:'Lion',   es:'León',     e:'🦁'},
+      {cat:'Animales',en:'Elephant',es:'Elefante',e:'🐘'},
+      {cat:'Animales',en:'Rabbit',  es:'Conejo',  e:'🐰'},
+      {cat:'Animales',en:'Frog',   es:'Rana',     e:'🐸'},
+      {cat:'Animales',en:'Butterfly',es:'Mariposa',e:'🦋'},
+      {cat:'Animales',en:'Turtle',  es:'Tortuga', e:'🐢'},
+      {cat:'Animales',en:'Horse',   es:'Caballo', e:'🐴'},
+      {cat:'Animales',en:'Monkey',  es:'Mono',    e:'🐒'},
+      // Fruits
+      {cat:'Frutas',en:'Apple',  es:'Manzana',e:'🍎'},
+      {cat:'Frutas',en:'Banana', es:'Plátano', e:'🍌'},
+      {cat:'Frutas',en:'Orange', es:'Naranja', e:'🍊'},
+      {cat:'Frutas',en:'Grapes', es:'Uvas',    e:'🍇'},
+      {cat:'Frutas',en:'Strawberry',es:'Fresa',e:'🍓'},
+      {cat:'Frutas',en:'Watermelon',es:'Sandía',e:'🍉'},
+      {cat:'Frutas',en:'Pineapple',es:'Piña',  e:'🍍'},
+      {cat:'Frutas',en:'Mango',  es:'Mango',   e:'🥭'},
+      {cat:'Frutas',en:'Cherry', es:'Cereza',  e:'🍒'},
+      {cat:'Frutas',en:'Lemon',  es:'Limón',   e:'🍋'},
+      // Body
+      {cat:'Cuerpo',en:'Eye',    es:'Ojo',      e:'👁️'},
+      {cat:'Cuerpo',en:'Nose',   es:'Nariz',    e:'👃'},
+      {cat:'Cuerpo',en:'Mouth',  es:'Boca',     e:'👄'},
+      {cat:'Cuerpo',en:'Ear',    es:'Oreja',    e:'👂'},
+      {cat:'Cuerpo',en:'Hand',   es:'Mano',     e:'✋'},
+      {cat:'Cuerpo',en:'Foot',   es:'Pie',      e:'🦶'},
+      {cat:'Cuerpo',en:'Heart',  es:'Corazón',  e:'❤️'},
+      {cat:'Cuerpo',en:'Head',   es:'Cabeza',   e:'🧠'},
+      // Things
+      {cat:'Cosas',en:'House',  es:'Casa',    e:'🏠'},
+      {cat:'Cosas',en:'Car',    es:'Carro',   e:'🚗'},
+      {cat:'Cosas',en:'Book',   es:'Libro',   e:'📚'},
+      {cat:'Cosas',en:'Ball',   es:'Pelota',  e:'⚽'},
+      {cat:'Cosas',en:'Sun',    es:'Sol',     e:'☀️'},
+      {cat:'Cosas',en:'Moon',   es:'Luna',    e:'🌙'},
+      {cat:'Cosas',en:'Star',   es:'Estrella',e:'⭐'},
+      {cat:'Cosas',en:'Tree',   es:'Árbol',   e:'🌳'},
+      {cat:'Cosas',en:'Flower', es:'Flor',    e:'🌸'},
+      {cat:'Cosas',en:'Water',  es:'Agua',    e:'💧'},
+    ];
+
+    const COLORS_DATA = [
+      {en:'Red',     es:'Rojo',     hex:'#e74c3c'},
+      {en:'Blue',    es:'Azul',     hex:'#3498db'},
+      {en:'Yellow',  es:'Amarillo', hex:'#f1c40f'},
+      {en:'Green',   es:'Verde',    hex:'#27ae60'},
+      {en:'Orange',  es:'Naranja',  hex:'#e67e22'},
+      {en:'Purple',  es:'Morado',   hex:'#9b59b6'},
+      {en:'Pink',    es:'Rosado',   hex:'#e91e63'},
+      {en:'White',   es:'Blanco',   hex:'#bdc3c7', dark: true},
+      {en:'Black',   es:'Negro',    hex:'#2c3e50'},
+      {en:'Brown',   es:'Café',     hex:'#8d6e63'},
+      {en:'Gray',    es:'Gris',     hex:'#7f8c8d'},
+      {en:'Turquoise',es:'Turquesa',hex:'#1abc9c'},
+    ];
+
+    let popupTimer = null;
+    let currentCat = 'Todos';
+
+    // ===== VOCABULARY =====
+    function buildCatFilter() {
+      const cats = ['Todos', ...new Set(VOCAB.map(v => v.cat))];
+      const filter = document.getElementById('cat-filter');
+      cats.forEach(cat => {
+        const chip = document.createElement('button');
+        chip.className = 'cat-chip' + (cat === 'Todos' ? ' active' : '');
+        chip.textContent = cat;
+        chip.onclick = () => {
+          currentCat = cat;
+          document.querySelectorAll('.cat-chip').forEach(c => c.classList.remove('active'));
+          chip.classList.add('active');
+          buildVocabGrid();
+          playClick();
+        };
+        filter.appendChild(chip);
+      });
+    }
+
+    function buildVocabGrid() {
+      const grid = document.getElementById('vocab-grid');
+      grid.innerHTML = '';
+      const filtered = currentCat === 'Todos' ? VOCAB : VOCAB.filter(v => v.cat === currentCat);
+      filtered.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'vocab-card';
+        card.innerHTML = `
+          <span class="vc-emoji">${item.e}</span>
+          <div class="vc-en">${item.en}</div>
+          <div class="vc-es">${item.es}</div>`;
+        card.onclick = () => showWordPopup(item);
+        grid.appendChild(card);
+      });
+    }
+
+    function showWordPopup(item) {
+      playClick();
+      document.getElementById('wp-emoji').textContent = item.e;
+      document.getElementById('wp-en').textContent    = item.en;
+      document.getElementById('wp-es').textContent    = item.es;
+      const popup = document.getElementById('word-popup');
+      popup.classList.add('show');
+      clearTimeout(popupTimer);
+      popupTimer = setTimeout(() => popup.classList.remove('show'), 1800);
+    }
+
+    // ===== FLASHCARDS =====
+    let fcIndex = 0;
+    let fcFlipped = false;
+    const fcItems = [...VOCAB].sort(() => Math.random()-0.5);
+
+    function loadFlashcard() {
+      const item = fcItems[fcIndex];
+      document.getElementById('fc-emoji-front').textContent = item.e;
+      document.getElementById('fc-emoji-back').textContent  = item.e;
+      document.getElementById('fc-word-en').textContent     = item.en;
+      document.getElementById('fc-word-es').textContent     = item.es;
+      document.getElementById('fc-counter').textContent     = `${fcIndex+1} / ${fcItems.length}`;
+      fcFlipped = false;
+      document.getElementById('fc-card').classList.remove('flipped');
+    }
+
+    function flipCard() {
+      fcFlipped = !fcFlipped;
+      document.getElementById('fc-card').classList.toggle('flipped', fcFlipped);
+      playClick();
+    }
+
+    function nextFlash() {
+      fcIndex = (fcIndex + 1) % fcItems.length;
+      loadFlashcard();
+      playClick();
+    }
+
+    function prevFlash() {
+      fcIndex = (fcIndex - 1 + fcItems.length) % fcItems.length;
+      loadFlashcard();
+      playClick();
+    }
+
+    // ===== COLORS =====
+    function buildColors() {
+      const grid = document.getElementById('color-grid');
+      COLORS_DATA.forEach(c => {
+        const swatch = document.createElement('div');
+        swatch.className = 'color-swatch';
+        swatch.style.background = c.hex;
+        if (c.dark) { swatch.style.color = '#333'; swatch.style.textShadow = 'none'; }
+        swatch.innerHTML = `<div class="cs-en">${c.en}</div><div class="cs-es">${c.es}</div>`;
+        swatch.onclick = () => { playClick(); swatch.style.transform='scale(1.15)'; setTimeout(()=>swatch.style.transform='',300); };
+        grid.appendChild(swatch);
+      });
+    }
+
+    // ===== MEMORY GAME =====
+    const MEMORY_ITEMS = VOCAB.slice(0, 8);
+    let memFlipped = [], memMatched = 0, memLocked = false;
+
+    function initMemory() {
+      memFlipped = []; memMatched = 0; memLocked = false;
+      document.getElementById('mem-pairs').textContent = 'Pares: 0 / 8';
+
+      const pairs = [];
+      MEMORY_ITEMS.forEach(item => {
+        pairs.push({type:'emoji',  val:item.e, id:item.en});
+        pairs.push({type:'word',   val:item.en, id:item.en});
+      });
+      const shuffled = pairs.sort(() => Math.random()-0.5);
+
+      const grid = document.getElementById('memory-grid');
+      grid.innerHTML = '';
+      shuffled.forEach((item, i) => {
+        const card = document.createElement('div');
+        card.className = 'mem-card face-down';
+        card.dataset.idx = i;
+        card.dataset.id  = item.id;
+        card.dataset.type = item.type;
+        card.dataset.val = item.val;
+        card.textContent = '❓';
+        card.onclick = () => flipMemCard(card);
+        grid.appendChild(card);
+      });
+    }
+
+    function flipMemCard(card) {
+      if (memLocked) return;
+      if (card.classList.contains('matched') || card.classList.contains('face-up')) return;
+      if (memFlipped.length >= 2) return;
+
+      playClick();
+      card.classList.remove('face-down');
+      card.classList.add('face-up');
+      card.textContent = card.dataset.val;
+      memFlipped.push(card);
+
+      if (memFlipped.length === 2) {
+        memLocked = true;
+        const [a, b] = memFlipped;
+        if (a.dataset.id === b.dataset.id && a.dataset.type !== b.dataset.type) {
+          // Match!
+          setTimeout(() => {
+            a.classList.add('matched'); b.classList.add('matched');
+            a.style.background='#e8f8e8'; b.style.background='#e8f8e8';
+            playCorrect();
+            memMatched++;
+            document.getElementById('mem-pairs').textContent = `Pares: ${memMatched} / 8`;
+            memFlipped = []; memLocked = false;
+            if (memMatched === 8) {
+              setTimeout(() => {
+                showCelebration('¡Completaste el Memory!', '¡Encontraste todos los pares! 🃏', '🎊');
+                launchConfetti(3000);
+              }, 500);
+            }
+          }, 600);
+        } else {
+          setTimeout(() => {
+            playWrong();
+            a.classList.remove('face-up'); a.classList.add('face-down'); a.textContent = '❓';
+            b.classList.remove('face-up'); b.classList.add('face-down'); b.textContent = '❓';
+            memFlipped = []; memLocked = false;
+          }, 1000);
+        }
+      }
+    }
+
+    // ===== QUIZ =====
+    let quizCorrect=0, quizTotal=0;
+    let quizShuffled = [];
+    let quizIdx = 0;
+
+    function initQuiz() {
+      quizShuffled = [...VOCAB].sort(() => Math.random()-0.5);
+      quizIdx = 0;
+      loadQuizQ();
+    }
+
+    function loadQuizQ() {
+      if (quizIdx >= quizShuffled.length) {
+        quizShuffled = [...VOCAB].sort(() => Math.random()-0.5);
+        quizIdx = 0;
+      }
+      const item = quizShuffled[quizIdx];
+      document.getElementById('quiz-emoji').textContent    = item.e;
+      document.getElementById('quiz-question').textContent = `¿Cómo se dice "${item.es}" en inglés?`;
+      document.getElementById('quiz-feedback').classList.remove('show');
+
+      // Wrong options from same category or random
+      const samecat = VOCAB.filter(v => v !== item);
+      const wrong = samecat.sort(() => Math.random()-0.5).slice(0, 3);
+      const options = [item, ...wrong].sort(() => Math.random()-0.5);
+
+      const optDiv = document.getElementById('quiz-options');
+      optDiv.innerHTML = '';
+      options.forEach(opt => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = `${opt.e} ${opt.en}`;
+        btn.onclick = () => checkQuizQ(btn, opt === item, item);
+        optDiv.appendChild(btn);
+      });
+    }
+
+    function checkQuizQ(btn, correct, item) {
+      quizTotal++;
+      if (correct) {
+        quizCorrect++;
+        playCorrect();
+        launchConfetti(1800);
+        btn.classList.add('correct');
+      } else {
+        playWrong();
+        btn.classList.add('wrong');
+        // Highlight correct
+        document.querySelectorAll('#quiz-options .option-btn').forEach(b => {
+          if (b.textContent.trim().startsWith(item.e)) b.classList.add('correct');
+        });
+      }
+      showFeedback(document.getElementById('quiz-feedback'), correct);
+      document.querySelectorAll('#quiz-options .option-btn').forEach(b => b.onclick = null);
+
+      // Update stars
+      const stars = document.getElementById('quiz-stars');
+      const score = document.getElementById('quiz-score');
+      const filled = Math.min(quizCorrect, 5);
+      stars.textContent = '⭐'.repeat(filled) + '☆'.repeat(Math.max(0,5-filled));
+      score.textContent = `${quizCorrect} / ${quizTotal} correctas`;
+
+      if (quizCorrect > 0 && quizCorrect % 5 === 0 && correct) {
+        setTimeout(() => showCelebration('¡Increíble!', `¡Sabes ${quizCorrect} palabras en inglés! 🌍`, '🏆'), 1200);
+      }
+
+      quizIdx++;
+      setTimeout(loadQuizQ, 1800);
+    }
+
+    // ===== INIT =====
+    buildCatFilter();
+    buildVocabGrid();
+    loadFlashcard();
+    buildColors();
+    initMemory();
+    initQuiz();
+    initTabs('#4D96FF');
+  </script>
+</body>
+</html>

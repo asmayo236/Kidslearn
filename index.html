@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Bruno Aprende 🌟</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    body { background: linear-gradient(160deg, #667eea 0%, #764ba2 40%, #f093fb 100%); min-height: 100vh; }
+
+    .home-wrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px 60px;
+      min-height: 100vh;
+    }
+
+    /* Header */
+    .home-header { text-align: center; color: white; margin-bottom: 40px; animation: popIn 0.5s; }
+    .deco-stars  { font-size: 2em; letter-spacing: 8px; margin-bottom: 15px; animation: float 3s infinite; display: block; }
+
+    .home-header h1 {
+      font-size: 3.2em;
+      font-weight: 900;
+      text-shadow: 3px 3px 12px rgba(0,0,0,0.25);
+      line-height: 1.1;
+    }
+
+    .home-header h1 .name {
+      display: block;
+      font-size: 1.2em;
+      color: #FFD93D;
+      text-shadow: 3px 3px 0px rgba(0,0,0,0.2), 0 0 30px rgba(255,217,61,0.6);
+    }
+
+    .birthday-badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      border: 2px solid rgba(255,255,255,0.4);
+      color: white;
+      border-radius: 50px;
+      padding: 8px 22px;
+      font-size: 1.1em;
+      font-weight: 700;
+      margin-top: 12px;
+    }
+
+    /* Activity Cards */
+    .activity-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      width: 100%;
+      max-width: 900px;
+    }
+
+    .activity-card {
+      background: white;
+      border-radius: 28px;
+      padding: 35px 25px;
+      text-align: center;
+      text-decoration: none;
+      color: var(--text);
+      box-shadow: 0 10px 35px rgba(0,0,0,0.2);
+      transition: transform 0.25s, box-shadow 0.25s;
+      display: block;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 6px solid transparent;
+    }
+
+    .activity-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 8px;
+      background: var(--card-color);
+    }
+
+    .activity-card:hover {
+      transform: translateY(-8px) scale(1.02);
+      box-shadow: 0 18px 45px rgba(0,0,0,0.28);
+    }
+
+    .activity-card.reading   { --card-color: linear-gradient(135deg, #845EC2, #FF6FB4); }
+    .activity-card.math      { --card-color: linear-gradient(135deg, #FF9A3C, #FFD93D); }
+    .activity-card.english   { --card-color: linear-gradient(135deg, #4D96FF, #00C9A7); }
+
+    .card-icon-wrap {
+      width: 90px; height: 90px;
+      border-radius: 50%;
+      margin: 0 auto 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3.2em;
+    }
+
+    .reading .card-icon-wrap  { background: linear-gradient(135deg, #f3e8ff, #fce4ec); }
+    .math    .card-icon-wrap  { background: linear-gradient(135deg, #fff3e0, #fffde7); }
+    .english .card-icon-wrap  { background: linear-gradient(135deg, #e3f2fd, #e0f7fa); }
+
+    .card-title {
+      font-size: 1.6em;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .reading .card-title  { color: #845EC2; }
+    .math    .card-title  { color: #FF9A3C; }
+    .english .card-title  { color: #4D96FF; }
+
+    .card-desc {
+      font-size: 0.95em;
+      color: #666;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .card-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+    }
+
+    .chip {
+      background: #f5f5f5;
+      border-radius: 20px;
+      padding: 5px 12px;
+      font-size: 0.8em;
+      font-weight: 700;
+      color: #555;
+    }
+
+    .reading .chip { background: #f3e8ff; color: #845EC2; }
+    .math    .chip { background: #fff3e0; color: #e65100; }
+    .english .chip { background: #e3f2fd; color: #0277bd; }
+
+    /* Footer */
+    .home-footer {
+      text-align: center;
+      color: rgba(255,255,255,0.85);
+      margin-top: 45px;
+      font-size: 1.05em;
+      font-weight: 600;
+    }
+
+    .balloon-row {
+      font-size: 2.2em;
+      letter-spacing: 5px;
+      margin-bottom: 10px;
+      animation: float 2.5s infinite;
+      display: block;
+    }
+
+    .progress-wrap {
+      background: rgba(255,255,255,0.15);
+      border-radius: 20px;
+      padding: 15px 25px;
+      margin-top: 20px;
+      color: white;
+      font-weight: 700;
+      font-size: 0.95em;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="home-wrapper">
+    <div class="home-header">
+      <span class="deco-stars">⭐ ✨ 🌟 ✨ ⭐</span>
+      <h1>
+        ¡Hola,
+        <span class="name">Bruno! 🎉</span>
+      </h1>
+      <div class="birthday-badge">🎂 ¡Pronto cumples 6 años! 🎈</div>
+    </div>
+
+    <div class="activity-cards">
+      <!-- Lectura -->
+      <a href="lectura.html" class="activity-card reading">
+        <div class="card-icon-wrap">📚</div>
+        <div class="card-title">Lectura</div>
+        <div class="card-desc">
+          Aprende el abecedario, las sílabas<br>
+          y forma palabras en Español
+        </div>
+        <div class="card-chips">
+          <span class="chip">🔤 Abecedario</span>
+          <span class="chip">📝 Sílabas</span>
+          <span class="chip">🔡 Palabras</span>
+        </div>
+      </a>
+
+      <!-- Matemáticas -->
+      <a href="matematicas.html" class="activity-card math">
+        <div class="card-icon-wrap">🔢</div>
+        <div class="card-title">Matemáticas</div>
+        <div class="card-desc">
+          Aprende a contar, sumar y restar<br>
+          con juegos visuales divertidos
+        </div>
+        <div class="card-chips">
+          <span class="chip">🔢 Contamos</span>
+          <span class="chip">➕ Sumamos</span>
+          <span class="chip">➖ Restamos</span>
+        </div>
+      </a>
+
+      <!-- Inglés -->
+      <a href="ingles.html" class="activity-card english">
+        <div class="card-icon-wrap">🌍</div>
+        <div class="card-title">Inglés</div>
+        <div class="card-desc">
+          Aprende palabras en English:<br>
+          animales, colores, frutas y más
+        </div>
+        <div class="card-chips">
+          <span class="chip">🐾 Animals</span>
+          <span class="chip">🎨 Colors</span>
+          <span class="chip">🍎 Fruits</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="home-footer">
+      <span class="balloon-row">🎈 🎂 🎈 🎂 🎈</span>
+      <p>¡Vas a aprender cosas increíbles, Bruno! 🚀</p>
+      <div class="progress-wrap">
+        💡 Elige una actividad para comenzar
+      </div>
+    </div>
+  </div>
+
+  <script src="utils.js"></script>
+  <script>
+    // Launch confetti on load for birthday fun!
+    window.addEventListener('load', () => {
+      setTimeout(() => launchConfetti(2500), 600);
+    });
+  </script>
+</body>
+</html>

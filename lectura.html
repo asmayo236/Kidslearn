@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Lectura – Bruno Aprende 📚</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    :root { --c1: #845EC2; --c2: #FF6FB4; }
+
+    /* Vowel row */
+    .vowel-row { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin: 20px 0; }
+    .vowel-card {
+      width: 70px; height: 70px;
+      background: linear-gradient(135deg, var(--pink), var(--purple));
+      color: white;
+      border-radius: 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 2em;
+      font-weight: 900;
+      box-shadow: 0 4px 12px rgba(132,94,194,0.35);
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+    .vowel-card:hover { transform: scale(1.15); }
+    .vowel-card .vname { font-size: 0.3em; font-weight: 600; opacity: 0.85; }
+
+    /* Consonant family */
+    .family-title {
+      font-size: 1.2em;
+      font-weight: 900;
+      color: var(--purple);
+      background: #f3e8ff;
+      padding: 8px 16px;
+      border-radius: 12px;
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+
+    .family-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+
+    .syl-btn {
+      background: white;
+      border: 3px solid var(--purple);
+      color: var(--purple);
+      border-radius: 14px;
+      padding: 12px 20px;
+      font-size: 1.6em;
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.15s;
+      box-shadow: 0 3px 8px rgba(132,94,194,0.2);
+    }
+    .syl-btn:hover {
+      background: var(--purple);
+      color: white;
+      transform: scale(1.08);
+    }
+
+    /* Word game */
+    .word-hint { font-size: 4em; text-align: center; margin: 15px 0; }
+    .word-name { font-size: 1.6em; font-weight: 900; color: var(--purple); text-align: center; margin-bottom: 5px; }
+    .word-progress { text-align: center; font-size: 0.95em; color: #888; margin-bottom: 15px; }
+
+    .word-slots {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+      min-height: 75px;
+      align-items: center;
+      background: #f9f0ff;
+      border-radius: 18px;
+      padding: 15px;
+      margin-bottom: 15px;
+      border: 3px dashed #d0b0ff;
+    }
+
+    .wslot {
+      width: 58px; height: 68px;
+      background: white;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2em;
+      font-weight: 900;
+      color: var(--purple);
+      box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+      border: 3px solid #d0b0ff;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .wslot.filled { background: #f3e8ff; border-color: var(--purple); }
+    .wslot:hover.filled { background: #ffe0f0; border-color: var(--pink); }
+
+    .wbuttons { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+    .wbtn {
+      width: 58px; height: 68px;
+      border: none;
+      border-radius: 12px;
+      font-size: 2em;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+      transition: all 0.15s;
+    }
+    .wbtn:hover:not(:disabled) { transform: scale(1.1) translateY(-4px); }
+    .wbtn:disabled { opacity: 0.25; cursor: not-allowed; }
+
+    /* Story */
+    .story-box {
+      background: white;
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+      border-left: 6px solid var(--purple);
+    }
+    .story-box .story-emoji { font-size: 3.5em; float: left; margin: 0 15px 10px 0; }
+    .story-box p { font-size: 1.3em; font-weight: 600; line-height: 1.8; color: #333; }
+    .story-box p strong { color: var(--purple); font-size: 1.1em; }
+    .story-box::after { content: ''; display: block; clear: both; }
+    .story-title { font-size: 1.5em; font-weight: 900; color: var(--purple); margin-bottom: 15px; }
+
+    /* Letter colors */
+    .lc-0 { color: #FF6B6B; } .lc-1 { color: #FF9A3C; } .lc-2 { color: #4D96FF; }
+    .lc-3 { color: #6BCB77; } .lc-4 { color: #845EC2; } .lc-5 { color: #FF6FB4; }
+  </style>
+</head>
+<body>
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="index.html" class="btn-home">🏠 Inicio</a>
+    <span class="logo">📚 Lectura</span>
+  </nav>
+
+  <!-- Header -->
+  <div class="page-header" style="--c1:#845EC2;--c2:#FF6FB4;">
+    <span class="page-icon">📚</span>
+    <h1>Aprendemos a Leer</h1>
+    <p>¡El abecedario, sílabas y palabras!</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="tab-abece">🔤 Abecedario</button>
+    <button class="tab-btn" data-tab="tab-silabas">🗣️ Sílabas</button>
+    <button class="tab-btn" data-tab="tab-palabras">🔡 Palabras</button>
+    <button class="tab-btn" data-tab="tab-cuento">📖 Cuento</button>
+  </div>
+
+  <!-- ===== TAB 1: ABECEDARIO ===== -->
+  <div id="tab-abece" class="tab-content active">
+    <div class="section-title">🔤 El Abecedario Español</div>
+    <p style="color:#666;margin-bottom:15px;">Toca una letra para ver un ejemplo 👇</p>
+
+    <div class="letter-grid" id="letter-grid"></div>
+
+    <div class="letter-detail" id="letter-detail">
+      <div class="ld-letter" id="ld-letter"></div>
+      <div class="ld-emoji"  id="ld-emoji"></div>
+      <div class="ld-word"   id="ld-word"></div>
+      <div class="ld-ex"     id="ld-ex"></div>
+    </div>
+
+    <!-- Vowels highlight -->
+    <div class="card" style="margin-top:25px;">
+      <div class="section-title" style="font-size:1.2em;">⭐ Las Vocales</div>
+      <div class="vowel-row">
+        <div class="vowel-card" onclick="playVowel('a')">A<span class="vname">a</span></div>
+        <div class="vowel-card" onclick="playVowel('e')">E<span class="vname">e</span></div>
+        <div class="vowel-card" onclick="playVowel('i')">I<span class="vname">i</span></div>
+        <div class="vowel-card" onclick="playVowel('o')">O<span class="vname">o</span></div>
+        <div class="vowel-card" onclick="playVowel('u')">U<span class="vname">u</span></div>
+      </div>
+      <p style="text-align:center;color:#845EC2;font-weight:700;font-size:1.1em;">
+        Las vocales son: A - E - I - O - U
+      </p>
+    </div>
+  </div>
+
+  <!-- ===== TAB 2: SÍLABAS ===== -->
+  <div id="tab-silabas" class="tab-content">
+    <div class="section-title">🗣️ Familias de Sílabas</div>
+    <p style="color:#666;margin-bottom:20px;">Toca cada sílaba para leerla 👇</p>
+    <div id="syllable-families"></div>
+  </div>
+
+  <!-- ===== TAB 3: PALABRAS ===== -->
+  <div id="tab-palabras" class="tab-content">
+    <div class="section-title">🔡 Forma la Palabra</div>
+    <p style="color:#666;margin-bottom:15px;">¡Toca las letras en el orden correcto! 👇</p>
+
+    <div class="score-bar">
+      <span id="stars-display" class="stars-display">☆☆☆☆☆</span>
+      <span id="score-text"   class="score-text">0 / 0 correctas</span>
+    </div>
+
+    <div id="word-game-area" class="word-game">
+      <div class="word-hint"    id="wg-emoji">🌟</div>
+      <div class="word-name"    id="wg-name">?</div>
+      <div class="word-progress" id="wg-progress"></div>
+      <div class="word-slots"   id="wg-slots"></div>
+      <div class="wbuttons"     id="wg-buttons"></div>
+      <div class="feedback"     id="wg-feedback"></div>
+      <button class="btn btn-primary" id="wg-next" onclick="nextWord()" style="margin-top:15px;display:none;">
+        Siguiente palabra ➡️
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== TAB 4: CUENTO ===== -->
+  <div id="tab-cuento" class="tab-content">
+    <div class="section-title">📖 Mini Cuentos para Leer</div>
+    <p style="color:#666;margin-bottom:20px;">Lee cada cuento despacio. ¡Las palabras importantes están en morado! 📖</p>
+
+    <div id="stories-container"></div>
+  </div>
+
+  <!-- Celebration Modal -->
+  <div class="modal-overlay" id="celebration-modal">
+    <div class="modal-box">
+      <div class="cel-emoji" style="font-size:5em;">🌟</div>
+      <h2 class="cel-msg">¡Excelente!</h2>
+      <p class="cel-sub">¡Muy bien hecho, Bruno!</p>
+      <button class="btn btn-primary" onclick="hideCelebration()">¡Seguimos! 🚀</button>
+    </div>
+  </div>
+
+  <script src="utils.js"></script>
+  <script>
+    // ===== DATA =====
+    const ALPHABET = [
+      {l:'A',e:'🍎',w:'Árbol', ex:'A de Árbol'},
+      {l:'B',e:'🫧',w:'Boca',  ex:'B de Boca'},
+      {l:'C',e:'🏠',w:'Casa',  ex:'C de Casa'},
+      {l:'D',e:'🦷',w:'Diente',ex:'D de Diente'},
+      {l:'E',e:'⭐',w:'Estrella',ex:'E de Estrella'},
+      {l:'F',e:'🌸',w:'Flor',  ex:'F de Flor'},
+      {l:'G',e:'🐱',w:'Gato',  ex:'G de Gato'},
+      {l:'H',e:'🌿',w:'Hoja',  ex:'H de Hoja'},
+      {l:'I',e:'🏝️',w:'Isla',  ex:'I de Isla'},
+      {l:'J',e:'🦒',w:'Jirafa',ex:'J de Jirafa'},
+      {l:'K',e:'🥝',w:'Kiwi',  ex:'K de Kiwi'},
+      {l:'L',e:'🦁',w:'León',  ex:'L de León'},
+      {l:'M',e:'🍎',w:'Manzana',ex:'M de Manzana'},
+      {l:'N',e:'🕚',w:'Noche', ex:'N de Noche'},
+      {l:'Ñ',e:'🍁',w:'Ñame',  ex:'Ñ de Ñame'},
+      {l:'O',e:'🐻',w:'Oso',   ex:'O de Oso'},
+      {l:'P',e:'🐟',w:'Pez',   ex:'P de Pez'},
+      {l:'Q',e:'🧀',w:'Queso', ex:'Q de Queso'},
+      {l:'R',e:'🐸',w:'Rana',  ex:'R de Rana'},
+      {l:'S',e:'☀️',w:'Sol',   ex:'S de Sol'},
+      {l:'T',e:'🐢',w:'Tortuga',ex:'T de Tortuga'},
+      {l:'U',e:'🦄',w:'Unicornio',ex:'U de Unicornio'},
+      {l:'V',e:'🐮',w:'Vaca',  ex:'V de Vaca'},
+      {l:'W',e:'🌐',w:'Web',   ex:'W de Web'},
+      {l:'X',e:'🎸',w:'Xilófono',ex:'X de Xilófono'},
+      {l:'Y',e:'🧘',w:'Yoga',  ex:'Y de Yoga'},
+      {l:'Z',e:'🦊',w:'Zorro', ex:'Z de Zorro'},
+    ];
+
+    const SYLLABLE_FAMILIES = [
+      {cons:'M', syls:['MA','ME','MI','MO','MU'], words:[{e:'🍎',w:'MANZANA'},{e:'🌙',w:'LUNA'}]},
+      {cons:'P', syls:['PA','PE','PI','PO','PU'], words:[{e:'🐟',w:'PEZ'},{e:'🍞',w:'PAN'}]},
+      {cons:'S', syls:['SA','SE','SI','SO','SU'], words:[{e:'☀️',w:'SOL'},{e:'🧦',w:'SOPA'}]},
+      {cons:'T', syls:['TA','TE','TI','TO','TU'], words:[{e:'☎️',w:'TELÉFONO'},{e:'🐢',w:'TORTUGA'}]},
+      {cons:'L', syls:['LA','LE','LI','LO','LU'], words:[{e:'🌙',w:'LUNA'},{e:'🦁',w:'LEÓN'}]},
+      {cons:'N', syls:['NA','NE','NI','NO','NU'], words:[{e:'🕚',w:'NOCHE'},{e:'👃',w:'NARIZ'}]},
+      {cons:'B', syls:['BA','BE','BI','BO','BU'], words:[{e:'🫧',w:'BOCA'},{e:'🚌',w:'BUS'}]},
+      {cons:'R', syls:['RA','RE','RI','RO','RU'], words:[{e:'🐸',w:'RANA'},{e:'🌹',w:'ROSA'}]},
+      {cons:'D', syls:['DA','DE','DI','DO','DU'], words:[{e:'🦷',w:'DIENTE'},{e:'🍬',w:'DULCE'}]},
+      {cons:'C', syls:['CA','CO','CU'],           words:[{e:'🏠',w:'CASA'},{e:'🐱',w:'CAMA'}]},
+      {cons:'F', syls:['FA','FE','FI','FO','FU'], words:[{e:'🌸',w:'FLOR'},{e:'🍓',w:'FRESA'}]},
+      {cons:'G', syls:['GA','GO','GU'],           words:[{e:'🐱',w:'GATO'},{e:'🎸',w:'GUSANO'}]},
+    ];
+
+    const WORDS = [
+      {e:'🌞',w:'SOL',       hint:'El astro que nos da luz y calor'},
+      {e:'🐟',w:'PEZ',       hint:'Animal que vive en el agua'},
+      {e:'🐻',w:'OSO',       hint:'Animal grande y peludo'},
+      {e:'🍇',w:'UVA',       hint:'Fruta pequeña y morada'},
+      {e:'🌊',w:'MAR',       hint:'Mucha agua salada'},
+      {e:'🌙',w:'LUNA',      hint:'Brilla de noche en el cielo'},
+      {e:'🐟',w:'PATO',      hint:'Ave que vive cerca del agua'},
+      {e:'🌹',w:'ROSA',      hint:'Flor roja con espinas'},
+      {e:'🍞',w:'PAN',       hint:'Lo comemos en el desayuno'},
+      {e:'🏠',w:'CASA',      hint:'Donde vivimos con la familia'},
+      {e:'🐸',w:'RANA',      hint:'Animal verde que salta'},
+      {e:'🌸',w:'FLOR',      hint:'Parte bonita de las plantas'},
+      {e:'🦁',w:'LEON',      hint:'El rey de la selva'},
+      {e:'🐱',w:'GATO',      hint:'Animal que dice miau'},
+      {e:'🌿',w:'HOJA',      hint:'Parte verde de la planta'},
+      {e:'🍎',w:'MANZANA',   hint:'Fruta roja muy sabrosa'},
+      {e:'🐢',w:'TORTUGA',   hint:'Animal lento con caparazón'},
+      {e:'🦊',w:'ZORRO',     hint:'Animal naranja muy astuto'},
+    ];
+
+    const STORIES = [
+      {
+        title: '🌞 El Sol y el Cielo',
+        emoji: '☀️',
+        text: `El <strong>sol</strong> sale por las <strong>mañanas</strong>.
+El <strong>cielo</strong> se pone muy <strong>azul</strong>.
+Los <strong>pájaros</strong> cantan: ¡pío pío!
+¡Qué día tan <strong>bonito</strong>!`
+      },
+      {
+        title: '🐱 Mi Gato Peluso',
+        emoji: '🐱',
+        text: `Mi <strong>gato</strong> se llama <strong>Peluso</strong>.
+Peluso tiene el pelo muy <strong>suave</strong>.
+Le gusta tomar el <strong>sol</strong> en la <strong>ventana</strong>.
+Por las noches duerme en mi <strong>cama</strong>.`
+      },
+      {
+        title: '🌧️ El Día de Lluvia',
+        emoji: '🌧️',
+        text: `Hoy llueve mucho en el <strong>campo</strong>.
+Las <strong>ranas</strong> saltan entre los <strong>charcos</strong>.
+Los <strong>caracoles</strong> salen a pasear.
+¡Qué rico olor a <strong>tierra</strong> mojada!`
+      },
+      {
+        title: '🍎 La Manzana Roja',
+        emoji: '🍎',
+        text: `En el <strong>jardín</strong> hay un <strong>árbol</strong> muy alto.
+En el árbol crece una <strong>manzana</strong> roja.
+Un <strong>pájaro</strong> pica la manzana.
+¡Está muy <strong>dulce</strong> y deliciosa!`
+      },
+    ];
+
+    // Letter button colors
+    const btnColors = ['#FF6B6B','#FF9A3C','#FFD93D','#6BCB77','#4D96FF','#845EC2','#FF6FB4','#00C9A7'];
+
+    // ===== ALPHABET =====
+    function buildAlphabet() {
+      const grid = document.getElementById('letter-grid');
+      ALPHABET.forEach((item, i) => {
+        const el = document.createElement('div');
+        el.className = 'letter-card';
+        const color = btnColors[i % btnColors.length];
+        el.innerHTML = `
+          <div class="big-letter lc-${i%6}" style="color:${color}">${item.l}</div>
+          <div class="small-ex">${item.w}</div>`;
+        el.onclick = () => showLetterDetail(item, color);
+        grid.appendChild(el);
+      });
+    }
+
+    function showLetterDetail(item, color) {
+      const d = document.getElementById('letter-detail');
+      document.getElementById('ld-letter').textContent = item.l + item.l.toLowerCase();
+      document.getElementById('ld-letter').style.color = color;
+      document.getElementById('ld-emoji').textContent  = item.e;
+      document.getElementById('ld-word').textContent   = item.w;
+      document.getElementById('ld-ex').textContent     = item.ex;
+      d.classList.add('show');
+      d.scrollIntoView({behavior:'smooth', block:'nearest'});
+      playClick();
+    }
+
+    function playVowel(v) {
+      playClick();
+      const popup = document.createElement('div');
+      popup.style.cssText = `
+        position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0);
+        background:linear-gradient(135deg,#845EC2,#FF6FB4); color:white;
+        border-radius:24px; padding:30px 50px; font-size:5em; font-weight:900;
+        z-index:999; text-align:center; box-shadow:0 10px 40px rgba(0,0,0,0.3);
+        transition:transform 0.3s;`;
+      popup.textContent = v.toUpperCase();
+      document.body.appendChild(popup);
+      requestAnimationFrame(() => { popup.style.transform = 'translate(-50%,-50%) scale(1)'; });
+      setTimeout(() => { popup.style.transform = 'translate(-50%,-50%) scale(0)'; setTimeout(() => popup.remove(), 300); }, 1200);
+    }
+
+    // ===== SYLLABLES =====
+    function buildSyllables() {
+      const container = document.getElementById('syllable-families');
+      SYLLABLE_FAMILIES.forEach(fam => {
+        const section = document.createElement('div');
+        section.className = 'syl-section';
+        section.innerHTML = `<div class="family-title">Familia de la ${fam.cons}</div>`;
+        const row = document.createElement('div');
+        row.className = 'family-row';
+        fam.syls.forEach((syl, i) => {
+          const btn = document.createElement('button');
+          btn.className = 'syl-btn';
+          btn.style.borderColor = btnColors[i % btnColors.length];
+          btn.style.color = btnColors[i % btnColors.length];
+          btn.textContent = syl;
+          btn.onclick = () => popSyllable(syl, btn);
+          row.appendChild(btn);
+        });
+        // Example words
+        const ex = document.createElement('div');
+        ex.style.cssText = 'display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;';
+        fam.words.forEach(wrd => {
+          const w = document.createElement('div');
+          w.style.cssText = 'background:#f9f0ff;border-radius:12px;padding:6px 14px;font-weight:700;color:#845EC2;font-size:0.9em;display:flex;align-items:center;gap:6px;';
+          w.innerHTML = `<span>${wrd.e}</span><span>${wrd.w}</span>`;
+          ex.appendChild(w);
+        });
+        section.appendChild(row);
+        section.appendChild(ex);
+        container.appendChild(section);
+      });
+    }
+
+    function popSyllable(syl, btn) {
+      playClick();
+      btn.style.background = '#845EC2';
+      btn.style.color = 'white';
+      setTimeout(() => { btn.style.background = ''; btn.style.color = btn.dataset.origColor || '#845EC2'; }, 500);
+
+      const popup = document.createElement('div');
+      popup.style.cssText = `
+        position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0);
+        background:linear-gradient(135deg,#667eea,#845EC2); color:white;
+        border-radius:20px; padding:25px 50px; font-size:5em; font-weight:900;
+        z-index:999; text-align:center; box-shadow:0 10px 40px rgba(0,0,0,0.3);
+        transition:transform 0.3s;`;
+      popup.textContent = syl;
+      document.body.appendChild(popup);
+      requestAnimationFrame(() => { popup.style.transform = 'translate(-50%,-50%) scale(1)'; });
+      setTimeout(() => { popup.style.transform = 'translate(-50%,-50%) scale(0)'; setTimeout(() => popup.remove(), 300); }, 1000);
+    }
+
+    // ===== WORD GAME =====
+    let wgIndex  = 0;
+    let wgOrder  = [];
+    let wgSlots  = [];
+    let wgCorrect = 0;
+    let wgTotal   = 0;
+
+    function shuffleArr(a) { return [...a].sort(() => Math.random()-0.5); }
+
+    function initWordGame() {
+      wgOrder = shuffleArr([...Array(WORDS.length).keys()]);
+      wgIndex = 0; wgCorrect = 0; wgTotal = 0;
+      loadWord();
+    }
+
+    function loadWord() {
+      if (wgIndex >= wgOrder.length) {
+        showCelebration('¡Completaste todas las palabras!', `Respondiste ${wgCorrect} de ${wgTotal} correctamente 🌟`, '🎊');
+        wgOrder = shuffleArr([...Array(WORDS.length).keys()]);
+        wgIndex = 0;
+        return;
+      }
+      const word = WORDS[wgOrder[wgIndex]];
+      document.getElementById('wg-emoji').textContent = word.e;
+      document.getElementById('wg-name').textContent  = word.hint;
+      document.getElementById('wg-progress').textContent = `Palabra ${wgIndex+1} de ${WORDS.length}`;
+      document.getElementById('wg-next').style.display = 'none';
+      document.getElementById('wg-feedback').classList.remove('show');
+
+      wgSlots = Array(word.w.length).fill('');
+
+      // Build slots
+      const slotsDiv = document.getElementById('wg-slots');
+      slotsDiv.innerHTML = '';
+      word.w.split('').forEach((_, i) => {
+        const slot = document.createElement('div');
+        slot.className = 'wslot';
+        slot.dataset.idx = i;
+        slot.onclick = () => removeFromSlot(i);
+        slotsDiv.appendChild(slot);
+      });
+
+      // Build shuffled letter buttons
+      const letters = shuffleArr(word.w.split('').map((l, i) => ({l, i})));
+      const btnsDiv = document.getElementById('wg-buttons');
+      btnsDiv.innerHTML = '';
+      letters.forEach((item, bi) => {
+        const btn = document.createElement('button');
+        btn.className = 'wbtn';
+        btn.style.background = `linear-gradient(135deg,${btnColors[bi%btnColors.length]},${btnColors[(bi+1)%btnColors.length]})`;
+        btn.style.color = 'white';
+        btn.textContent = item.l;
+        btn.dataset.origIdx = item.i;
+        btn.onclick = () => addToSlot(btn, item.l, item.i);
+        btnsDiv.appendChild(btn);
+      });
+    }
+
+    function addToSlot(btn, letter, origIdx) {
+      if (btn.disabled) return;
+      const word = WORDS[wgOrder[wgIndex]];
+      const firstEmpty = wgSlots.indexOf('');
+      if (firstEmpty === -1) return;
+      playClick();
+      wgSlots[firstEmpty] = letter;
+      btn.disabled = true;
+      btn.style.opacity = '0.25';
+
+      const slots = document.querySelectorAll('.wslot');
+      slots[firstEmpty].textContent = letter;
+      slots[firstEmpty].classList.add('filled');
+
+      // Check if complete
+      if (!wgSlots.includes('')) {
+        const formed = wgSlots.join('');
+        const correct = formed === word.w;
+        wgTotal++;
+        if (correct) {
+          wgCorrect++;
+          playCorrect();
+          launchConfetti(2000);
+          showFeedback(document.getElementById('wg-feedback'), true);
+          slots.forEach(s => { s.style.background = '#e8f8e8'; s.style.borderColor = '#6BCB77'; });
+          document.getElementById('wg-next').style.display = 'inline-block';
+        } else {
+          playWrong();
+          showFeedback(document.getElementById('wg-feedback'), false);
+          slots.forEach(s => { s.style.background = '#ffe8e8'; s.style.borderColor = '#FF6B6B'; });
+          setTimeout(() => resetCurrentWord(), 1500);
+        }
+        updateStars(wgCorrect, wgTotal);
+      }
+    }
+
+    function removeFromSlot(idx) {
+      if (!wgSlots[idx]) return;
+      wgSlots[idx] = '';
+      const slots = document.querySelectorAll('.wslot');
+      slots[idx].textContent = '';
+      slots[idx].classList.remove('filled');
+      // Re-enable the matching button (find the disabled one with that letter position)
+      // We track by finding the first disabled btn with the same letter at original position
+      // For simplicity, just reset word
+      playClick();
+      resetCurrentWord();
+    }
+
+    function resetCurrentWord() {
+      loadWord();
+    }
+
+    function nextWord() {
+      wgIndex++;
+      loadWord();
+    }
+
+    // ===== STORIES =====
+    function buildStories() {
+      const container = document.getElementById('stories-container');
+      STORIES.forEach(story => {
+        const box = document.createElement('div');
+        box.className = 'story-box';
+        box.innerHTML = `
+          <div class="story-title">${story.title}</div>
+          <span class="story-emoji">${story.emoji}</span>
+          <p>${story.text.replace(/\n/g,'<br>')}</p>`;
+        container.appendChild(box);
+      });
+    }
+
+    // ===== INIT =====
+    buildAlphabet();
+    buildSyllables();
+    initWordGame();
+    buildStories();
+    initTabs('#845EC2');
+  </script>
+</body>
+</html>

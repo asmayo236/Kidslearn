@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+  <title>Matemáticas – Bruno Aprende 🔢</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    :root { --c1: #FF9A3C; --c2: #FFD93D; }
+
+    /* Number line */
+    .number-line {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 15px 5px;
+      scrollbar-width: none;
+    }
+    .number-line::-webkit-scrollbar { display: none; }
+    .num-box {
+      min-width: 60px; height: 70px;
+      background: white;
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5em;
+      font-weight: 900;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      border: 3px solid transparent;
+      cursor: pointer;
+      transition: transform 0.15s;
+      flex-shrink: 0;
+    }
+    .num-box .num-emoji { font-size: 0.65em; }
+    .num-box:hover { transform: scale(1.12); }
+
+    /* Count game */
+    .count-area {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      min-height: 80px;
+      align-items: center;
+      background: #fffbf0;
+      border-radius: 20px;
+      padding: 20px;
+      margin: 15px 0;
+      cursor: pointer;
+      border: 3px solid #ffe0a0;
+      transition: background 0.2s;
+    }
+    .count-area:hover { background: #fff8e0; }
+    .count-item { font-size: 2.2em; transition: transform 0.1s; }
+    .count-item:hover { transform: scale(1.3); }
+
+    .count-question { font-size: 1.5em; font-weight: 900; color: var(--orange); text-align: center; margin: 10px 0; }
+
+    /* Number answer buttons */
+    .num-options { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 15px 0; }
+    .num-opt {
+      width: 70px; height: 70px;
+      background: white;
+      border: 4px solid #e0e0e0;
+      border-radius: 18px;
+      font-size: 1.8em;
+      font-weight: 900;
+      cursor: pointer;
+      transition: all 0.15s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+    .num-opt:hover { transform: scale(1.1); border-color: var(--orange); }
+    .num-opt.correct { background: #e8f8e8; border-color: #6BCB77; animation: popCorrect 0.4s; }
+    .num-opt.wrong   { background: #ffe8e8; border-color: #FF6B6B; animation: shake 0.4s; }
+
+    /* Math problem */
+    .math-problem-box {
+      background: white;
+      border-radius: 24px;
+      padding: 30px 20px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .math-equation {
+      font-size: 3em;
+      font-weight: 900;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin: 20px 0;
+    }
+    .math-num  { color: var(--purple); }
+    .math-sym  { color: var(--orange); }
+    .math-result { color: var(--green); min-width: 60px; }
+    .math-result.unknown { color: #ccc; }
+
+    /* Visual items */
+    .visual-items {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+      align-items: center;
+      min-height: 60px;
+      padding: 15px;
+      background: #f9f9f9;
+      border-radius: 16px;
+      margin: 10px 0;
+    }
+
+    .v-item { font-size: 2em; animation: popIn 0.2s; }
+    .v-item.removed { opacity: 0.2; text-decoration: line-through; }
+    .v-separator { font-size: 2em; font-weight: 900; color: var(--orange); margin: 0 5px; }
+
+    /* Progress row */
+    .progress-row { display: flex; gap: 10px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 20px; }
+    .progress-badge {
+      background: white;
+      border-radius: 50px;
+      padding: 8px 20px;
+      font-size: 1em;
+      font-weight: 800;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+      color: var(--orange);
+    }
+
+    /* Number cards 0-10 */
+    .big-num-card {
+      background: linear-gradient(135deg, var(--orange), var(--yellow));
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 15px;
+      box-shadow: 0 6px 20px rgba(255,154,60,0.4);
+    }
+    .big-num-card .the-num { font-size: 5em; font-weight: 900; line-height: 1; }
+    .big-num-card .the-word { font-size: 1.4em; font-weight: 700; opacity: 0.9; margin-top: 5px; }
+    .big-num-card .the-items { font-size: 2em; margin-top: 10px; letter-spacing: 3px; }
+  </style>
+</head>
+<body>
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="index.html" class="btn-home">🏠 Inicio</a>
+    <span class="logo">🔢 Matemáticas</span>
+  </nav>
+
+  <!-- Header -->
+  <div class="page-header" style="--c1:#FF9A3C;--c2:#FFD93D;">
+    <span class="page-icon">🔢</span>
+    <h1>¡Juguemos con Números!</h1>
+    <p>Contamos, sumamos y restamos</p>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="tab-contamos">🔢 Contamos</button>
+    <button class="tab-btn" data-tab="tab-numeros">📊 Los Números</button>
+    <button class="tab-btn" data-tab="tab-suma">➕ Sumamos</button>
+    <button class="tab-btn" data-tab="tab-resta">➖ Restamos</button>
+    <button class="tab-btn" data-tab="tab-quiz">🎯 Quiz</button>
+  </div>
+
+  <!-- ===== TAB 1: CONTAMOS ===== -->
+  <div id="tab-contamos" class="tab-content active">
+    <div class="section-title">🔢 ¿Cuántos hay?</div>
+    <p style="color:#666;margin-bottom:15px;">Cuenta los emojis y elige el número correcto 👇</p>
+
+    <div class="score-bar">
+      <span id="count-stars" class="stars-display">☆☆☆☆☆</span>
+      <span id="count-score" class="score-text">0 / 0 correctas</span>
+    </div>
+
+    <div class="math-problem-box">
+      <div id="count-items" class="count-area"></div>
+      <div class="count-question" id="count-question">¿Cuántos hay?</div>
+      <div class="num-options" id="count-options"></div>
+      <div class="feedback" id="count-feedback"></div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 2: NÚMEROS ===== -->
+  <div id="tab-numeros" class="tab-content">
+    <div class="section-title">📊 Los Números del 0 al 10</div>
+
+    <!-- Number line -->
+    <div class="card">
+      <p style="color:#666;font-weight:700;margin-bottom:10px;">🔢 La Línea de los Números:</p>
+      <div class="number-line" id="num-line"></div>
+    </div>
+
+    <!-- Number cards -->
+    <div id="num-cards-container"></div>
+  </div>
+
+  <!-- ===== TAB 3: SUMA ===== -->
+  <div id="tab-suma" class="tab-content">
+    <div class="section-title">➕ ¡Sumemos!</div>
+    <p style="color:#666;margin-bottom:15px;">Cuenta todos los emojis juntos y elige la respuesta 👇</p>
+
+    <div class="score-bar">
+      <span id="sum-stars" class="stars-display">☆☆☆☆☆</span>
+      <span id="sum-score" class="score-text">0 / 0 correctas</span>
+    </div>
+
+    <div class="math-problem-box">
+      <div id="sum-visual" class="visual-items"></div>
+      <div class="math-equation">
+        <span class="math-num" id="sum-a">?</span>
+        <span class="math-sym">+</span>
+        <span class="math-num" id="sum-b">?</span>
+        <span class="math-sym">=</span>
+        <span class="math-result unknown" id="sum-result">?</span>
+      </div>
+      <div class="num-options" id="sum-options"></div>
+      <div class="feedback" id="sum-feedback"></div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 4: RESTA ===== -->
+  <div id="tab-resta" class="tab-content">
+    <div class="section-title">➖ ¡Restemos!</div>
+    <p style="color:#666;margin-bottom:15px;">Quita los emojis tachados y cuenta los que quedan 👇</p>
+
+    <div class="score-bar">
+      <span id="sub-stars" class="stars-display">☆☆☆☆☆</span>
+      <span id="sub-score" class="score-text">0 / 0 correctas</span>
+    </div>
+
+    <div class="math-problem-box">
+      <div id="sub-visual" class="visual-items"></div>
+      <div class="math-equation">
+        <span class="math-num" id="sub-a">?</span>
+        <span class="math-sym">−</span>
+        <span class="math-num" id="sub-b">?</span>
+        <span class="math-sym">=</span>
+        <span class="math-result unknown" id="sub-result">?</span>
+      </div>
+      <div class="num-options" id="sub-options"></div>
+      <div class="feedback" id="sub-feedback"></div>
+    </div>
+  </div>
+
+  <!-- ===== TAB 5: QUIZ MIXTO ===== -->
+  <div id="tab-quiz" class="tab-content">
+    <div class="section-title">🎯 ¡Quiz Matemático!</div>
+    <p style="color:#666;margin-bottom:15px;">Suma y resta mezcladas. ¡Tú puedes! 💪</p>
+
+    <div class="score-bar">
+      <span id="quiz-stars" class="stars-display">☆☆☆☆☆</span>
+      <span id="quiz-score" class="score-text">0 / 0 correctas</span>
+    </div>
+
+    <div class="math-problem-box">
+      <div id="quiz-visual" class="visual-items"></div>
+      <div class="math-equation" id="quiz-equation">
+        <span class="math-num" id="quiz-a">?</span>
+        <span class="math-sym" id="quiz-op">+</span>
+        <span class="math-num" id="quiz-b">?</span>
+        <span class="math-sym">=</span>
+        <span class="math-result unknown">?</span>
+      </div>
+      <div class="options-grid" id="quiz-options" style="max-width:400px;margin:0 auto;"></div>
+      <div class="feedback" id="quiz-feedback"></div>
+    </div>
+  </div>
+
+  <!-- Celebration Modal -->
+  <div class="modal-overlay" id="celebration-modal">
+    <div class="modal-box">
+      <div class="cel-emoji" style="font-size:5em;">🌟</div>
+      <h2 class="cel-msg">¡Excelente!</h2>
+      <p class="cel-sub">¡Muy bien hecho, Bruno!</p>
+      <button class="btn btn-primary" onclick="hideCelebration()">¡Seguimos! 🚀</button>
+    </div>
+  </div>
+
+  <script src="utils.js"></script>
+  <script>
+    // ===== DATA =====
+    const EMOJIS = ['🍎','🍊','🍋','🍇','🍓','🌸','⭐','🎈','🐥','🦋','🌈','🎀','🔵','🟡','🟢'];
+    const NUMBER_WORDS = ['cero','uno','dos','tres','cuatro','cinco','seis','siete','ocho','nueve','diez'];
+    const NUMBER_COLORS = ['#888','#FF6B6B','#FF9A3C','#FFD93D','#6BCB77','#4D96FF','#845EC2','#FF6FB4','#00C9A7','#F44336','#3F51B5'];
+
+    function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+    function shuffleArr(a) { return [...a].sort(() => Math.random()-0.5); }
+
+    function makeOptions(correct, min=0, max=10, count=4) {
+      const opts = new Set([correct]);
+      let tries = 0;
+      while (opts.size < count && tries < 50) {
+        opts.add(rand(Math.max(min, correct-3), Math.min(max, correct+3)));
+        tries++;
+      }
+      while (opts.size < count) opts.add(rand(min, max));
+      return shuffleArr([...opts]);
+    }
+
+    // ===== COUNT GAME =====
+    let countCorrect=0, countTotal=0;
+    let countAnswer = 0;
+
+    function loadCountProblem() {
+      const n    = rand(1, 10);
+      const emoji = EMOJIS[rand(0, EMOJIS.length-1)];
+      countAnswer = n;
+
+      const items = document.getElementById('count-items');
+      items.innerHTML = '';
+      for (let i=0; i<n; i++) {
+        const el = document.createElement('span');
+        el.className = 'count-item';
+        el.textContent = emoji;
+        items.appendChild(el);
+      }
+
+      document.getElementById('count-question').textContent = `¿Cuántos ${emoji} hay?`;
+
+      const opts = document.getElementById('count-options');
+      opts.innerHTML = '';
+      makeOptions(n, 1, 10, 4).forEach(v => {
+        const btn = document.createElement('button');
+        btn.className = 'num-opt';
+        btn.textContent = v;
+        btn.onclick = () => checkCount(btn, v);
+        opts.appendChild(btn);
+      });
+      document.getElementById('count-feedback').classList.remove('show');
+    }
+
+    function checkCount(btn, val) {
+      countTotal++;
+      const correct = val === countAnswer;
+      if (correct) { countCorrect++; playCorrect(); launchConfetti(1800); }
+      else playWrong();
+      btn.classList.add(correct ? 'correct' : 'wrong');
+      showFeedback(document.getElementById('count-feedback'), correct);
+      document.querySelectorAll('#count-options .num-opt').forEach(b => b.onclick = null);
+      const stars = { el: document.getElementById('count-stars'), score: document.getElementById('count-score') };
+      updateCustomStars(stars.el, stars.score, countCorrect, countTotal);
+      setTimeout(loadCountProblem, 1800);
+    }
+
+    // ===== NUMBER LINE / CARDS =====
+    function buildNumberLine() {
+      const line = document.getElementById('num-line');
+      for (let i=0; i<=10; i++) {
+        const box = document.createElement('div');
+        box.className = 'num-box';
+        box.style.borderColor = NUMBER_COLORS[i];
+        box.style.color = NUMBER_COLORS[i];
+        box.innerHTML = `${i}<span class="num-emoji">${'🔵'.repeat(Math.min(i,5))}${'⚪'.repeat(Math.max(0,i-5))}</span>`;
+        box.onclick = () => { playClick(); box.style.transform='scale(1.2)'; setTimeout(()=>box.style.transform='',300); };
+        line.appendChild(box);
+      }
+    }
+
+    function buildNumberCards() {
+      const container = document.getElementById('num-cards-container');
+      for (let i=0; i<=10; i++) {
+        const items = EMOJIS.slice(0,1).join('').repeat(i) || '∅';
+        const card = document.createElement('div');
+        card.className = 'big-num-card';
+        card.style.background = `linear-gradient(135deg, ${NUMBER_COLORS[i]}, ${NUMBER_COLORS[(i+1)%11]})`;
+        card.innerHTML = `
+          <div class="the-num">${i}</div>
+          <div class="the-word">${NUMBER_WORDS[i]}</div>
+          <div class="the-items">${i===0 ? '—' : '🍎'.repeat(i)}</div>`;
+        container.appendChild(card);
+      }
+    }
+
+    // ===== ADDITION =====
+    let sumCorrect=0, sumTotal=0, sumAnswer=0;
+
+    function loadSumProblem() {
+      const a = rand(1, 5);
+      const b = rand(1, 5);
+      sumAnswer = a + b;
+      const emoji = EMOJIS[rand(0,EMOJIS.length-1)];
+
+      document.getElementById('sum-a').textContent = a;
+      document.getElementById('sum-b').textContent = b;
+      document.getElementById('sum-result').textContent = '?';
+      document.getElementById('sum-result').className = 'math-result unknown';
+
+      const visual = document.getElementById('sum-visual');
+      visual.innerHTML = '';
+      for (let i=0; i<a; i++) { const s=document.createElement('span'); s.className='v-item'; s.textContent=emoji; visual.appendChild(s); }
+      const sep = document.createElement('span'); sep.className='v-separator'; sep.textContent='➕'; visual.appendChild(sep);
+      for (let i=0; i<b; i++) { const s=document.createElement('span'); s.className='v-item'; s.textContent=emoji; visual.appendChild(s); }
+
+      const opts = document.getElementById('sum-options');
+      opts.innerHTML = '';
+      makeOptions(sumAnswer, 1, 10, 4).forEach(v => {
+        const btn = document.createElement('button');
+        btn.className = 'num-opt';
+        btn.textContent = v;
+        btn.onclick = () => checkSum(btn, v);
+        opts.appendChild(btn);
+      });
+      document.getElementById('sum-feedback').classList.remove('show');
+    }
+
+    function checkSum(btn, val) {
+      sumTotal++;
+      const correct = val === sumAnswer;
+      if (correct) {
+        sumCorrect++;
+        playCorrect();
+        launchConfetti(1800);
+        document.getElementById('sum-result').textContent = sumAnswer;
+        document.getElementById('sum-result').className = 'math-result';
+      } else playWrong();
+      btn.classList.add(correct ? 'correct' : 'wrong');
+      showFeedback(document.getElementById('sum-feedback'), correct);
+      document.querySelectorAll('#sum-options .num-opt').forEach(b => b.onclick = null);
+      updateCustomStars(document.getElementById('sum-stars'), document.getElementById('sum-score'), sumCorrect, sumTotal);
+      setTimeout(loadSumProblem, 1800);
+    }
+
+    // ===== SUBTRACTION =====
+    let subCorrect=0, subTotal=0, subAnswer=0;
+
+    function loadSubProblem() {
+      const a = rand(2, 9);
+      const b = rand(1, a);
+      subAnswer = a - b;
+      const emoji = EMOJIS[rand(0,EMOJIS.length-1)];
+
+      document.getElementById('sub-a').textContent = a;
+      document.getElementById('sub-b').textContent = b;
+      document.getElementById('sub-result').textContent = '?';
+      document.getElementById('sub-result').className = 'math-result unknown';
+
+      const visual = document.getElementById('sub-visual');
+      visual.innerHTML = '';
+      for (let i=0; i<a; i++) {
+        const s=document.createElement('span');
+        s.className = 'v-item' + (i >= subAnswer ? ' removed' : '');
+        s.textContent = emoji;
+        visual.appendChild(s);
+      }
+
+      const opts = document.getElementById('sub-options');
+      opts.innerHTML = '';
+      makeOptions(subAnswer, 0, 9, 4).forEach(v => {
+        const btn = document.createElement('button');
+        btn.className = 'num-opt';
+        btn.textContent = v;
+        btn.onclick = () => checkSub(btn, v);
+        opts.appendChild(btn);
+      });
+      document.getElementById('sub-feedback').classList.remove('show');
+    }
+
+    function checkSub(btn, val) {
+      subTotal++;
+      const correct = val === subAnswer;
+      if (correct) {
+        subCorrect++;
+        playCorrect();
+        launchConfetti(1800);
+        document.getElementById('sub-result').textContent = subAnswer;
+        document.getElementById('sub-result').className = 'math-result';
+      } else playWrong();
+      btn.classList.add(correct ? 'correct' : 'wrong');
+      showFeedback(document.getElementById('sub-feedback'), correct);
+      document.querySelectorAll('#sub-options .num-opt').forEach(b => b.onclick = null);
+      updateCustomStars(document.getElementById('sub-stars'), document.getElementById('sub-score'), subCorrect, subTotal);
+      setTimeout(loadSubProblem, 1800);
+    }
+
+    // ===== QUIZ MIXTO =====
+    let quizCorrect=0, quizTotal=0, quizAnswer=0;
+
+    function loadQuizProblem() {
+      const isSum = Math.random() > 0.5;
+      let a, b;
+      if (isSum) {
+        a = rand(1, 6); b = rand(1, 6 - a + 2);
+        quizAnswer = a + b;
+      } else {
+        a = rand(2, 9); b = rand(1, a);
+        quizAnswer = a - b;
+      }
+      const emoji = EMOJIS[rand(0,EMOJIS.length-1)];
+
+      document.getElementById('quiz-a').textContent = a;
+      document.getElementById('quiz-op').textContent = isSum ? '+' : '−';
+      document.getElementById('quiz-b').textContent = b;
+
+      const visual = document.getElementById('quiz-visual');
+      visual.innerHTML = '';
+      if (isSum) {
+        for (let i=0; i<a; i++) { const s=document.createElement('span'); s.className='v-item'; s.textContent=emoji; visual.appendChild(s); }
+        const sep=document.createElement('span'); sep.className='v-separator'; sep.textContent=isSum?'➕':'➖'; visual.appendChild(sep);
+        for (let i=0; i<b; i++) { const s=document.createElement('span'); s.className='v-item'; s.textContent=emoji; visual.appendChild(s); }
+      } else {
+        for (let i=0; i<a; i++) {
+          const s=document.createElement('span');
+          s.className='v-item'+(i>=quizAnswer?' removed':'');
+          s.textContent=emoji;
+          visual.appendChild(s);
+        }
+      }
+
+      const opts = document.getElementById('quiz-options');
+      opts.innerHTML = '';
+      makeOptions(quizAnswer, 0, 12, 4).forEach(v => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.textContent = v;
+        btn.onclick = () => checkQuiz(btn, v);
+        opts.appendChild(btn);
+      });
+      document.getElementById('quiz-feedback').classList.remove('show');
+    }
+
+    function checkQuiz(btn, val) {
+      quizTotal++;
+      const correct = val === quizAnswer;
+      if (correct) { quizCorrect++; playCorrect(); launchConfetti(1800); }
+      else playWrong();
+      btn.classList.add(correct ? 'correct' : 'wrong');
+      showFeedback(document.getElementById('quiz-feedback'), correct);
+      document.querySelectorAll('#quiz-options .option-btn').forEach(b => b.onclick = null);
+      updateCustomStars(document.getElementById('quiz-stars'), document.getElementById('quiz-score'), quizCorrect, quizTotal);
+      if (quizCorrect > 0 && quizCorrect % 5 === 0 && correct) {
+        setTimeout(() => showCelebration(`¡${quizCorrect} respuestas correctas! 🎉`, '¡Eres un genio de las matemáticas! 🧠', '🏆'), 1200);
+      }
+      setTimeout(loadQuizProblem, 1800);
+    }
+
+    // ===== STAR HELPERS =====
+    function updateCustomStars(starsEl, scoreEl, correct, total) {
+      if (!starsEl || !scoreEl) return;
+      const filled = Math.min(correct, 5);
+      starsEl.textContent = '⭐'.repeat(filled) + '☆'.repeat(Math.max(0,5-filled));
+      scoreEl.textContent = `${correct} / ${total} correctas`;
+    }
+
+    // ===== INIT =====
+    buildNumberLine();
+    buildNumberCards();
+    loadCountProblem();
+    loadSumProblem();
+    loadSubProblem();
+    loadQuizProblem();
+    initTabs('#FF9A3C');
+  </script>
+</body>
+</html>
