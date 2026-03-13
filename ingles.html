@@ -349,7 +349,9 @@
       const popup = document.getElementById('word-popup');
       popup.classList.add('show');
       clearTimeout(popupTimer);
-      popupTimer = setTimeout(() => popup.classList.remove('show'), 1800);
+      popupTimer = setTimeout(() => popup.classList.remove('show'), 2200);
+      // Say English word, then Spanish translation
+      speakEn(item.en, 0.85, 1.1, () => setTimeout(() => speak(item.es, 0.8, 1.1), 300));
     }
 
     // ===== FLASHCARDS =====
@@ -366,12 +368,18 @@
       document.getElementById('fc-counter').textContent     = `${fcIndex+1} / ${fcItems.length}`;
       fcFlipped = false;
       document.getElementById('fc-card').classList.remove('flipped');
+      // Speak English word when card loads
+      setTimeout(() => speakEn(fcItems[fcIndex].en), 300);
     }
 
     function flipCard() {
       fcFlipped = !fcFlipped;
       document.getElementById('fc-card').classList.toggle('flipped', fcFlipped);
       playClick();
+      // Front = English, Back = Spanish
+      const item = fcItems[fcIndex];
+      if (fcFlipped) speak(item.es, 0.8, 1.1);
+      else speakEn(item.en);
     }
 
     function nextFlash() {
@@ -395,7 +403,13 @@
         swatch.style.background = c.hex;
         if (c.dark) { swatch.style.color = '#333'; swatch.style.textShadow = 'none'; }
         swatch.innerHTML = `<div class="cs-en">${c.en}</div><div class="cs-es">${c.es}</div>`;
-        swatch.onclick = () => { playClick(); swatch.style.transform='scale(1.15)'; setTimeout(()=>swatch.style.transform='',300); };
+        swatch.onclick = () => {
+          playClick();
+          swatch.style.transform = 'scale(1.15)';
+          setTimeout(() => swatch.style.transform = '', 400);
+          // Say color in English, then Spanish
+          speakEn(c.en, 0.85, 1.1, () => setTimeout(() => speak(c.es, 0.8, 1.1), 300));
+        };
         grid.appendChild(swatch);
       });
     }
@@ -440,6 +454,8 @@
       card.classList.add('face-up');
       card.textContent = card.dataset.val;
       memFlipped.push(card);
+      // Speak the English word when revealed (word type card)
+      if (card.dataset.type === 'word') speakEn(card.dataset.val);
 
       if (memFlipped.length === 2) {
         memLocked = true;
@@ -523,6 +539,8 @@
           if (b.textContent.trim().startsWith(item.e)) b.classList.add('correct');
         });
       }
+      // Always speak the correct English word so Bruno learns it
+      setTimeout(() => speakEn(item.en, 0.8, 1.1), 400);
       showFeedback(document.getElementById('quiz-feedback'), correct);
       document.querySelectorAll('#quiz-options .option-btn').forEach(b => b.onclick = null);
 

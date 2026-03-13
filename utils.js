@@ -45,6 +45,53 @@ function playCelebration() {
   notes.forEach((n, i) => setTimeout(() => playTone(n, 'sine', 0.15), i * 80));
 }
 
+/* ---- Text-to-Speech (Web Speech API) ---- */
+let _ttsVoice = null;
+
+function _loadTTSVoices() {
+  if (!window.speechSynthesis) return;
+  const voices = window.speechSynthesis.getVoices();
+  _ttsVoice = voices.find(v => v.lang === 'es-ES')
+           || voices.find(v => v.lang === 'es-MX')
+           || voices.find(v => v.lang.startsWith('es'))
+           || null;
+}
+_loadTTSVoices();
+if (window.speechSynthesis) window.speechSynthesis.onvoiceschanged = _loadTTSVoices;
+
+function speak(text, rate = 0.8, pitch = 1.15, onend = null) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang  = 'es-ES';
+  utt.rate  = rate;
+  utt.pitch = pitch;
+  if (_ttsVoice) utt.voice = _ttsVoice;
+  if (onend) utt.onend = onend;
+  window.speechSynthesis.speak(utt);
+}
+
+function stopSpeaking() {
+  if (window.speechSynthesis) window.speechSynthesis.cancel();
+}
+
+/* Speak in English */
+function speakEn(text, rate = 0.85, pitch = 1.1, onend = null) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utt = new SpeechSynthesisUtterance(text);
+  utt.lang = 'en-US';
+  utt.rate = rate;
+  utt.pitch = pitch;
+  const voices = window.speechSynthesis.getVoices();
+  const enVoice = voices.find(v => v.lang === 'en-US')
+               || voices.find(v => v.lang.startsWith('en'))
+               || null;
+  if (enVoice) utt.voice = enVoice;
+  if (onend) utt.onend = onend;
+  window.speechSynthesis.speak(utt);
+}
+
 /* ---- Confetti ---- */
 const canvas = document.getElementById('confetti-canvas');
 let confettiParticles = [];

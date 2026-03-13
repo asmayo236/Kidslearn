@@ -129,6 +129,43 @@
     /* Letter colors */
     .lc-0 { color: #FF6B6B; } .lc-1 { color: #FF9A3C; } .lc-2 { color: #4D96FF; }
     .lc-3 { color: #6BCB77; } .lc-4 { color: #845EC2; } .lc-5 { color: #FF6FB4; }
+
+    /* TTS speak button */
+    .speak-btn {
+      background: linear-gradient(135deg, #4D96FF, #00C9A7);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 10px 22px;
+      font-size: 1em;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s;
+      box-shadow: 0 4px 12px rgba(77,150,255,0.35);
+      margin-top: 12px;
+    }
+    .speak-btn:hover { transform: scale(1.06); }
+    .speak-btn:disabled { opacity: 0.5; cursor: default; }
+    .speak-btn.speaking { background: linear-gradient(135deg, #FF9A3C, #FFD93D); animation: pulse 1s infinite; }
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.05)} }
+
+    /* Story read button */
+    .story-read-btn {
+      float: right;
+      background: linear-gradient(135deg, #4D96FF, #00C9A7);
+      color: white;
+      border: none;
+      border-radius: 50px;
+      padding: 8px 18px;
+      font-size: 0.9em;
+      font-weight: 800;
+      cursor: pointer;
+      margin: 0 0 10px 12px;
+      transition: transform 0.15s;
+      box-shadow: 0 3px 10px rgba(77,150,255,0.3);
+    }
+    .story-read-btn:hover { transform: scale(1.07); }
+    .story-read-btn:disabled { opacity: 0.5; cursor: default; }
   </style>
 </head>
 <body>
@@ -167,6 +204,10 @@
       <div class="ld-emoji"  id="ld-emoji"></div>
       <div class="ld-word"   id="ld-word"></div>
       <div class="ld-ex"     id="ld-ex"></div>
+      <button class="speak-btn" id="ld-speak-btn"
+        onclick="speak(document.getElementById('ld-word').textContent, 0.7, 1.15)">
+        🔊 Escuchar
+      </button>
     </div>
 
     <!-- Vowels highlight -->
@@ -365,10 +406,13 @@ Un <strong>pájaro</strong> pica la manzana.
       d.classList.add('show');
       d.scrollIntoView({behavior:'smooth', block:'nearest'});
       playClick();
+      // Speak: letter name, pause, then example word
+      speak(item.l + '. ' + item.w, 0.7, 1.15);
     }
 
     function playVowel(v) {
       playClick();
+      speak(v, 0.7, 1.2);
       const popup = document.createElement('div');
       popup.style.cssText = `
         position:fixed; top:50%; left:50%; transform:translate(-50%,-50%) scale(0);
@@ -417,6 +461,7 @@ Un <strong>pájaro</strong> pica la manzana.
 
     function popSyllable(syl, btn) {
       playClick();
+      speak(syl.toLowerCase(), 0.7, 1.15);
       btn.style.background = '#845EC2';
       btn.style.color = 'white';
       setTimeout(() => { btn.style.background = ''; btn.style.color = btn.dataset.origColor || '#845EC2'; }, 500);
@@ -498,6 +543,7 @@ Un <strong>pájaro</strong> pica la manzana.
       const firstEmpty = wgSlots.indexOf('');
       if (firstEmpty === -1) return;
       playClick();
+      speak(letter.toLowerCase(), 0.8, 1.2);
       wgSlots[firstEmpty] = letter;
       btn.disabled = true;
       btn.style.opacity = '0.25';
@@ -518,6 +564,8 @@ Un <strong>pájaro</strong> pica la manzana.
           showFeedback(document.getElementById('wg-feedback'), true);
           slots.forEach(s => { s.style.background = '#e8f8e8'; s.style.borderColor = '#6BCB77'; });
           document.getElementById('wg-next').style.display = 'inline-block';
+          // Read the completed word aloud after a short pause
+          setTimeout(() => speak(word.w.toLowerCase(), 0.65, 1.1), 500);
         } else {
           playWrong();
           showFeedback(document.getElementById('wg-feedback'), false);
@@ -554,14 +602,41 @@ Un <strong>pájaro</strong> pica la manzana.
     function buildStories() {
       const container = document.getElementById('stories-container');
       STORIES.forEach(story => {
+        const plainText = story.text.replace(/<[^>]+>/g, '').replace(/\n/g, '. ');
         const box = document.createElement('div');
         box.className = 'story-box';
+        const btn = document.createElement('button');
+        btn.className = 'story-read-btn';
+        btn.textContent = '🔊 Escuchar';
+        btn.dataset.text = plainText;
+        btn.addEventListener('click', () => toggleStory(btn));
         box.innerHTML = `
           <div class="story-title">${story.title}</div>
           <span class="story-emoji">${story.emoji}</span>
           <p>${story.text.replace(/\n/g,'<br>')}</p>`;
+        // Insert button after title
+        box.querySelector('.story-title').after(btn);
         container.appendChild(box);
       });
+    }
+
+    function toggleStory(btn) {
+      if (btn.classList.contains('speaking')) {
+        stopSpeaking();
+        btn.textContent = '🔊 Escuchar';
+        btn.classList.remove('speaking');
+      } else {
+        // Stop any other story button that may be playing
+        document.querySelectorAll('.story-read-btn.speaking').forEach(b => {
+          b.textContent = '🔊 Escuchar'; b.classList.remove('speaking');
+        });
+        btn.textContent = '⏹ Detener';
+        btn.classList.add('speaking');
+        speak(btn.dataset.text, 0.75, 1.0, () => {
+          btn.textContent = '🔊 Escuchar';
+          btn.classList.remove('speaking');
+        });
+      }
     }
 
     // ===== INIT =====
