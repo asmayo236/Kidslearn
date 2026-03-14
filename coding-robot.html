@@ -347,31 +347,69 @@
     // ===== LEVELS =====
     // r = row (0=top), c = col (0=left)
     const LEVELS = [
-      // ── Easy: single direction ──
+      // ── 1-2: Línea recta (⭐) ──
       { name:'Nivel 1',  stars:1, robot:{r:2,c:0}, goal:{r:2,c:4}, maxSteps:5,
         hint:'¡Ve hacia la derecha! ➡️' },
-      { name:'Nivel 2',  stars:1, robot:{r:0,c:3}, goal:{r:4,c:3}, maxSteps:5,
+      { name:'Nivel 2',  stars:1, robot:{r:0,c:2}, goal:{r:4,c:2}, maxSteps:5,
         hint:'¡Baja todo recto! ⬇️' },
-      { name:'Nivel 3',  stars:1, robot:{r:3,c:5}, goal:{r:3,c:1}, maxSteps:5,
-        hint:'¡Ve hacia la izquierda! ⬅️' },
-      { name:'Nivel 4',  stars:1, robot:{r:5,c:3}, goal:{r:1,c:3}, maxSteps:5,
-        hint:'¡Sube todo recto! ⬆️' },
-      // ── Medium: two directions ──
-      { name:'Nivel 5',  stars:2, robot:{r:5,c:0}, goal:{r:2,c:3}, maxSteps:7,
-        hint:'Sube y ve a la derecha 🤔' },
-      { name:'Nivel 6',  stars:2, robot:{r:0,c:5}, goal:{r:4,c:1}, maxSteps:9,
-        hint:'Baja y ve a la izquierda 🤔' },
-      { name:'Nivel 7',  stars:2, robot:{r:5,c:5}, goal:{r:1,c:1}, maxSteps:9,
+      // ── 3-6: Dos direcciones sin obstáculos (⭐⭐) ──
+      { name:'Nivel 3',  stars:2, robot:{r:0,c:0}, goal:{r:3,c:4}, maxSteps:9,
+        hint:'Ve a la derecha y luego baja ↪️' },
+      { name:'Nivel 4',  stars:2, robot:{r:5,c:0}, goal:{r:2,c:3}, maxSteps:8,
+        hint:'Sube y luego ve a la derecha 🤔' },
+      { name:'Nivel 5',  stars:2, robot:{r:0,c:5}, goal:{r:4,c:1}, maxSteps:9,
+        hint:'Baja y luego ve a la izquierda 🤔' },
+      { name:'Nivel 6',  stars:2, robot:{r:5,c:5}, goal:{r:1,c:1}, maxSteps:9,
         hint:'Sube y ve a la izquierda 🤔' },
-      { name:'Nivel 8',  stars:2, robot:{r:0,c:0}, goal:{r:5,c:4}, maxSteps:10,
-        hint:'¡Piensa bien el camino! 🧠' },
-      // ── Hard: with obstacles ──
-      { name:'Nivel 9',  stars:3, robot:{r:0,c:0}, goal:{r:5,c:5}, maxSteps:12,
+      // ── 7-8: Dos direcciones + 1 obstáculo (⭐⭐) ──
+      { name:'Nivel 7',  stars:2, robot:{r:0,c:0}, goal:{r:4,c:5}, maxSteps:11,
+        obstacles:[{r:2,c:2}],
+        hint:'¡Hay un obstáculo en el camino, rodéalo! 🧱' },
+      { name:'Nivel 8',  stars:2, robot:{r:5,c:0}, goal:{r:1,c:4}, maxSteps:11,
+        obstacles:[{r:3,c:2}],
+        hint:'¡Busca el camino libre! 🧱' },
+      // ── 9-10: Diagonal y grupos de obstáculos (⭐⭐⭐) ──
+      { name:'Nivel 9',  stars:3, robot:{r:0,c:0}, goal:{r:5,c:5}, maxSteps:13,
         obstacles:[{r:1,c:1},{r:2,c:2},{r:3,c:3},{r:4,c:4}],
-        hint:'¡Rodea los obstáculos por la derecha! 🧱' },
+        hint:'¡La diagonal te bloquea! Rodéala por fuera 🧱' },
       { name:'Nivel 10', stars:3, robot:{r:5,c:0}, goal:{r:0,c:5}, maxSteps:12,
         obstacles:[{r:2,c:1},{r:2,c:2},{r:3,c:3},{r:3,c:4}],
-        hint:'¡Busca el camino libre! 🧠' },
+        hint:'¡Esquiva los bloques del centro! 🧠' },
+      // ── 11-12: Muros con un hueco (⭐⭐⭐) ──
+      { name:'Nivel 11', stars:3, robot:{r:0,c:0}, goal:{r:5,c:4}, maxSteps:12,
+        obstacles:[{r:2,c:1},{r:2,c:2},{r:2,c:3},{r:2,c:4},{r:2,c:5}],
+        hint:'¡Hay un muro! El hueco está a la izquierda 🧱' },
+      { name:'Nivel 12', stars:3, robot:{r:0,c:0}, goal:{r:5,c:5}, maxSteps:13,
+        obstacles:[{r:2,c:1},{r:2,c:2},{r:2,c:3},{r:2,c:4},{r:4,c:0},{r:4,c:1},{r:4,c:2},{r:4,c:3}],
+        hint:'¡Dos muros, dos huecos! Piensa bien el camino 🧠🧱' },
+      // ── 13-14: Dos muros en zigzag (⭐⭐⭐⭐) ──
+      { name:'Nivel 13', stars:4, robot:{r:0,c:5}, goal:{r:5,c:0}, maxSteps:13,
+        obstacles:[{r:1,c:0},{r:1,c:1},{r:1,c:2},{r:1,c:3},{r:1,c:4},{r:3,c:1},{r:3,c:2},{r:3,c:3},{r:3,c:4},{r:3,c:5}],
+        hint:'¡Dos muros! El hueco se alterna de lado 🔄🧱' },
+      { name:'Nivel 14', stars:4, robot:{r:0,c:0}, goal:{r:5,c:5}, maxSteps:13,
+        obstacles:[{r:1,c:1},{r:1,c:2},{r:1,c:3},{r:1,c:4},{r:1,c:5},{r:3,c:0},{r:3,c:1},{r:3,c:2},{r:3,c:3},{r:3,c:4}],
+        hint:'¡El hueco cambia de lado en cada muro! 🔄🧠' },
+      // ── 15-16: Tres muros, la meta es el hueco (⭐⭐⭐⭐) ──
+      { name:'Nivel 15', stars:4, robot:{r:0,c:0}, goal:{r:5,c:3}, maxSteps:15,
+        obstacles:[{r:1,c:1},{r:1,c:2},{r:1,c:3},{r:1,c:4},{r:1,c:5},{r:3,c:0},{r:3,c:1},{r:3,c:2},{r:3,c:3},{r:3,c:4},{r:5,c:0},{r:5,c:1},{r:5,c:2},{r:5,c:4},{r:5,c:5}],
+        hint:'¡Tres muros! La estrella está en el único hueco libre 🏆🧱' },
+      { name:'Nivel 16', stars:4, robot:{r:5,c:5}, goal:{r:0,c:2}, maxSteps:15,
+        obstacles:[{r:4,c:0},{r:4,c:1},{r:4,c:2},{r:4,c:3},{r:4,c:4},{r:2,c:1},{r:2,c:2},{r:2,c:3},{r:2,c:4},{r:2,c:5},{r:0,c:0},{r:0,c:1},{r:0,c:3},{r:0,c:4},{r:0,c:5}],
+        hint:'¡Sube por el hueco correcto en cada muro! ⬆️🤯' },
+      // ── 17-18: Tres muros simétricos (⭐⭐⭐⭐⭐) ──
+      { name:'Nivel 17', stars:5, robot:{r:0,c:0}, goal:{r:5,c:5}, maxSteps:14,
+        obstacles:[{r:1,c:1},{r:1,c:2},{r:1,c:3},{r:1,c:4},{r:3,c:1},{r:3,c:2},{r:3,c:3},{r:3,c:4},{r:5,c:1},{r:5,c:2},{r:5,c:3},{r:5,c:4}],
+        hint:'¡Experto! Tres muros te esperan, solo hay un lado libre 🤯🧱' },
+      { name:'Nivel 18', stars:5, robot:{r:0,c:5}, goal:{r:5,c:0}, maxSteps:14,
+        obstacles:[{r:1,c:1},{r:1,c:2},{r:1,c:3},{r:1,c:4},{r:3,c:1},{r:3,c:2},{r:3,c:3},{r:3,c:4},{r:5,c:1},{r:5,c:2},{r:5,c:3},{r:5,c:4}],
+        hint:'¡Al revés que el anterior! ¿Qué lado eliges? 🔄🤯' },
+      // ── 19-20: Curva en S (⭐⭐⭐⭐⭐) ──
+      { name:'Nivel 19', stars:5, robot:{r:0,c:0}, goal:{r:5,c:1}, maxSteps:16,
+        obstacles:[{r:1,c:4},{r:1,c:5},{r:2,c:0},{r:2,c:1},{r:2,c:2},{r:2,c:3},{r:4,c:2},{r:4,c:3},{r:4,c:4},{r:4,c:5}],
+        hint:'¡Curva en S! Avanza, gira y vuelve a girar 🐍🏅' },
+      { name:'Nivel 20', stars:5, robot:{r:0,c:0}, goal:{r:5,c:5}, maxSteps:22,
+        obstacles:[{r:1,c:0},{r:1,c:1},{r:1,c:2},{r:1,c:3},{r:1,c:4},{r:3,c:2},{r:3,c:3},{r:3,c:4},{r:3,c:5},{r:5,c:0},{r:5,c:1},{r:5,c:2},{r:5,c:3},{r:5,c:4}],
+        hint:'¡El nivel definitivo! Triple curva en S, solo los mejores lo superan 🏆👑' },
     ];
 
     const ARROWS = { U:'⬆️', D:'⬇️', L:'⬅️', R:'➡️' };
