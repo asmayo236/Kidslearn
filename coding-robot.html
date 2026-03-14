@@ -616,10 +616,23 @@
           document.querySelectorAll('.cmd-badge').forEach(b => b.className='cmd-badge done');
           await delay(300);
           renderGrid(path, pos);         // shows 🎉
+          const CONGRATS = [
+            '¡Bruno, lo has hecho genial! 🌟',
+            '¡Fantástico, Bruno! 🚀',
+            '¡Enhorabuena, Bruno! 🎉',
+            '¡Increíble, Bruno! 🤩',
+            '¡Muy bien, Bruno! ⭐',
+            '¡Eso es, Bruno! ¡Tú puedes con todo! 💪',
+            '¡Qué listo eres, Bruno! 🧠',
+            '¡Genio del código, Bruno! 👾',
+            '¡Impresionante, Bruno! 🏅',
+            '¡Lo has clavado, Bruno! 🎯',
+          ];
+          const congrats = CONGRATS[currentLv % CONGRATS.length];
           showBanner(true, '¡Llegaste a la estrella! 🌟');
           playCorrect();
           launchConfetti(2800);
-          speak('¡Felicidades! ¡Llegaste a la estrella! ¡Eres un programador increíble!', 0.8, 1.15);
+          speak(congrats.replace(/[🌟🚀🎉🤩⭐💪🧠👾🏅🎯]/gu, ''), 0.8, 1.15);
           completed.add(currentLv);
           buildProgressDots();
 
@@ -627,8 +640,8 @@
 
           const isLast = currentLv >= LEVELS.length - 1;
           showCelebration(
-            isLast ? '¡Has ganado todos los niveles! 🏆' : '¡Nivel completado! 🎉',
-            '¡Eres un programador increíble, Bruno!',
+            isLast ? '¡Has completado todos los niveles! 🏆' : congrats,
+            isLast ? '¡Bruno, eres un auténtico Coding Master! 🤖👑' : '¡Sigue así, campeón!',
             '🤖'
           );
           const nextBtn = document.getElementById('next-btn');
