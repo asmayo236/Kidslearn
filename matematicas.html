@@ -256,6 +256,62 @@
     .big-num-card .the-num { font-size: 5em; font-weight: 900; line-height: 1; }
     .big-num-card .the-word { font-size: 1.4em; font-weight: 700; opacity: 0.9; margin-top: 5px; }
     .big-num-card .the-items { font-size: 2em; margin-top: 10px; letter-spacing: 3px; }
+    /* ===== MEMORY GAME ===== */
+    .memory-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      max-width: 360px;
+      margin: 0 auto 16px;
+    }
+    .mem-card {
+      height: 88px;
+      perspective: 700px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .mem-card-inner {
+      width: 100%; height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.35s ease;
+      border-radius: 14px;
+    }
+    .mem-card.flipped .mem-card-inner,
+    .mem-card.matched .mem-card-inner { transform: rotateY(180deg); }
+    .mem-face, .mem-back {
+      position: absolute; inset: 0;
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      backface-visibility: hidden;
+      -webkit-backface-visibility: hidden;
+    }
+    .mem-face {
+      background: linear-gradient(135deg, #845EC2, #4D96FF);
+      font-size: 1.5em;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    }
+    .mem-back {
+      transform: rotateY(180deg);
+      background: white;
+      border: 3px solid #e0e0e0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      padding: 4px;
+      flex-direction: column;
+    }
+    .mem-back.num-card  { font-size: 2.4em; font-weight: 900; color: #845EC2; }
+    .mem-back.emoji-card { text-align: center; line-height: 1.3; word-break: break-all; }
+    .mem-card.matched .mem-back { background: #e8f8e8; border-color: #6BCB77; }
+    .mem-card:not(.flipped):not(.matched):hover .mem-card-inner { transform: scale(1.06); }
+    .mem-stats {
+      display: flex; gap: 10px; justify-content: center;
+      margin: 0 0 14px; flex-wrap: wrap;
+    }
+    .mem-stat {
+      background: white; border-radius: 50px; padding: 7px 16px;
+      font-size: 0.95em; font-weight: 800;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1); color: #845EC2;
+    }
   </style>
 </head>
 <body>
@@ -282,6 +338,7 @@
     <button class="tab-btn" data-tab="tab-resta">➖ Restamos</button>
     <button class="tab-btn" data-tab="tab-quiz">🎯 Quiz</button>
     <button class="tab-btn" data-tab="tab-logica">🧠 Razonamiento</button>
+    <button class="tab-btn" data-tab="tab-memory">🃏 Memory</button>
   </div>
 
   <!-- ===== TAB 1: CONTAMOS ===== -->
@@ -443,6 +500,18 @@
       <div class="order-source" id="ord-source"></div>
       <div class="feedback" id="ord-feedback"></div>
     </div>
+  </div>
+
+  <!-- ===== TAB 7: MEMORY GAME ===== -->
+  <div id="tab-memory" class="tab-content">
+    <div class="section-title">🃏 Memory Matemático</div>
+    <p style="color:#666;margin-bottom:15px;">Encuentra las 10 parejas: número con su cantidad de emojis 🔢✨</p>
+    <div class="mem-stats">
+      <span class="mem-stat" id="mem-pairs">🃏 Parejas: 0 / 10</span>
+      <span class="mem-stat" id="mem-moves">🕹️ Movimientos: 0</span>
+    </div>
+    <div class="memory-grid" id="mem-grid"></div>
+    <button class="btn btn-secondary" style="display:block;margin:0 auto;" onclick="buildMemoryGame()">🔄 Nueva partida</button>
   </div>
 
   <!-- Celebration Modal -->
@@ -975,6 +1044,76 @@
       }
     }
 
+    // ===== MEMORY GAME =====
+    const MEM_EMOJIS = ['🌟','🍎','🐶','🌸','⭐','🎈','🐥','🦋','🍊','🎀'];
+    let memFlipped = [], memMatched = new Set(), memMoves = 0, memLocked = false;
+
+    function buildMemoryGame() {
+      memFlipped = []; memMatched = new Set(); memMoves = 0; memLocked = false;
+      updateMemStats();
+      const cards = [];
+      for (let i = 1; i <= 10; i++) {
+        const emoji = MEM_EMOJIS[i - 1];
+        const fs = i <= 4 ? '1.4em' : i <= 7 ? '1.1em' : '0.82em';
+        cards.push({ pairId:i, type:'num',
+          html:`<div class="mem-back num-card">${i}</div>` });
+        cards.push({ pairId:i, type:'emoji',
+          html:`<div class="mem-back emoji-card" style="font-size:${fs}">${emoji.repeat(i)}</div>` });
+      }
+      const grid = document.getElementById('mem-grid');
+      grid.innerHTML = '';
+      shuffleArr(cards).forEach(card => {
+        const el = document.createElement('div');
+        el.className = 'mem-card';
+        el.dataset.pairId = card.pairId;
+        el.dataset.type   = card.type;
+        el.innerHTML = `<div class="mem-card-inner"><div class="mem-face">🔢</div>${card.html}</div>`;
+        el.onclick = () => flipMemCard(el);
+        grid.appendChild(el);
+      });
+    }
+
+    function flipMemCard(el) {
+      if (memLocked || el.classList.contains('flipped') || el.classList.contains('matched')) return;
+      if (memFlipped.length >= 2) return;
+      el.classList.add('flipped');
+      playClick();
+      memFlipped.push(el);
+      if (memFlipped.length === 2) {
+        memMoves++;
+        updateMemStats();
+        memLocked = true;
+        const [a, b] = memFlipped;
+        const isMatch = a.dataset.pairId === b.dataset.pairId && a.dataset.type !== b.dataset.type;
+        setTimeout(() => {
+          if (isMatch) {
+            a.classList.add('matched'); b.classList.add('matched');
+            a.classList.remove('flipped'); b.classList.remove('flipped');
+            memMatched.add(a.dataset.pairId);
+            playCorrect();
+            updateMemStats();
+            if (memMatched.size === 10) {
+              launchConfetti(3000);
+              setTimeout(() => showCelebration(
+                '¡Memory completado! 🃏',
+                `¡Genial, Bruno! Lo lograste en ${memMoves} movimientos 🧠🏆`,
+                '🎉'
+              ), 500);
+            }
+          } else {
+            a.classList.remove('flipped'); b.classList.remove('flipped');
+            playWrong();
+          }
+          memFlipped = []; memLocked = false;
+        }, isMatch ? 400 : 950);
+      }
+    }
+
+    function updateMemStats() {
+      document.getElementById('mem-pairs').textContent  = `🃏 Parejas: ${memMatched.size} / 10`;
+      document.getElementById('mem-moves').textContent  = `🕹️ Movimientos: ${memMoves}`;
+    }
+
     // ===== INIT =====
     buildNumberLine();
     buildNumberCards();
@@ -986,6 +1125,7 @@
     loadOddOne();
     loadCompareProblem();
     loadOrderProblem();
+    buildMemoryGame();
     initTabs('#FF9A3C');
   </script>
 </body>
